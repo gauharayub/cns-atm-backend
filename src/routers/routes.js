@@ -77,7 +77,7 @@ router.get('/order/:id',async (req,res)=>{
 })
 
 //end-point for form to be filled by engineer after completion of his assignment....
-router.get('/compliance/:id',(req,res)=>{
+router.get('/compliance/:id',async(req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
         await order.populate('task')
@@ -101,8 +101,22 @@ router.get('/compliance/:id',(req,res)=>{
 
 
 //end-point for custom-generation of an assignment....
-router.post('/generateorder',(req,res)=>{
+router.post('/generateorder',async(req,res)=>{
+    try{
+        const order  = new Order(req.body)
+        await order.save()
+        res.status(201).send('Order generated successfully')
+    }
+    catch(e){
+        res.status(500).send('Error generating the object')
+    }
+   
 
+})
+
+//end-point for photo/document uploads..
+router.post('/uploadphoto',async (req,res)=>{
+    
 })
 
 
