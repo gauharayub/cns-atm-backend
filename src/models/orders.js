@@ -11,9 +11,10 @@ const orderSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
-    equip_id:{
+    equipment:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
+        ref:'Equipment'
     },
     work:{
         type:String,
@@ -27,7 +28,7 @@ const orderSchema = new mongoose.Schema({
         required:true,
         ref:'Tasklist'
     },
-    engineer_id:{
+    engineer:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
         ref:'Engineer'
@@ -44,7 +45,12 @@ const orderSchema = new mongoose.Schema({
     },
     dateOfCompletion:{
         type:Date
+    },
+    workImage:{
+        type:Buffer
+//Buffer type is used to store binary data in mongodb database.....
     }
+
 })
 
 const Order = mongoose.model('Order',orderSchema)
