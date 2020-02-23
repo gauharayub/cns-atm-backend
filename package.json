@@ -2,10 +2,9 @@
   "name": "preventive",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon src/app.js"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +18,7 @@
     "timespan": "^2.3.0"
   },
   "devDependencies": {
+    "mongo-seeding": "^3.4.0-alpha.1",
     "nodemon": "^2.0.2"
   }
 }

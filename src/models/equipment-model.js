@@ -6,7 +6,7 @@ const equipmentSchema = new mongoose.Schema({
          unique:true
      },
      equipmentNumber:{
-        type:String,
+        type:Number,
         required:true,
         unique:true
      },

@@ -1,11 +1,14 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const Location = require('./models/location')
+const Equipment = require('./models/equipment-model')
+const MaintenancePlan = require('./models/maintenance-plan')
 const Order = require('./models/orders')
 const cron = require('node-cron')
 const timespan = require('timespan')
 require('./db/mongoose')
 const router = require('./routers/routes')
+const history = require('./routers/history-routes')
 
 
 //creates an express web-server
@@ -17,19 +20,21 @@ app.use(express.json())
 
 //register routers on express app....
 app.use(router)
+app.use(history)
 
-var num = 100
+var num = 1
 //function to generate orders every cycle of task.
-const orderGeneration = ()=>{
+const orderGeneration = async()=>{
 //runs every second
     cron.schedule('*/1 * * * * *',async ()=>{
         const locations = await Location.find()
-
+        const equipment = await Equipment.find()
+        // console.log(equipment[0])
         for(let i=0;i<locations.length;i++){
-            await locations[i].populate('equipment')
-                              .populate('equipment.maintenancePlanList')
-                              .execPopulate()
-            const maintenanceList = locations[i].maintenancePlanList
+            await locations[i].populate('equipment').execPopulate()
+            await locations[i].populate('equipment.maintenancePlanList').execPopulate()
+            const maintenanceList = locations[i].equipment.maintenancePlanList
+            // console.log(maintenanceList)
             for(let j=0;j<maintenanceList.length;j++){
                 let current = Date.now()
                 let updated = Date.parse(maintenanceList[j].updatedAt)
@@ -52,16 +57,17 @@ const orderGeneration = ()=>{
                     days  = month*30
                 }
 
-                //check if cycle is reached or not.....            
+//check if cycle is reached or not.....            
                 if(tspan.totalDays()>=days){
 //create new order if cycle has completed for task....         
                     const order = new Order({
                         number:num,
-                        assignmentCode:'T-500',
+                        assignmentCode:'T-400',
                         equipment:maintenanceList[j].equipment,
                         work:'Cleaning of metal-part',
                         task:maintenanceList[j].task,
                     })
+                    num++
                         await order.save()
                         maintenanceList[j].updatedAt = current
                         await maintenanceList[j].save()
@@ -72,7 +78,8 @@ const orderGeneration = ()=>{
     })
 }
 
-orderGeneration()
+// orderGeneration()
+
 
 //listen on specified port.....
 app.listen(port,()=>{

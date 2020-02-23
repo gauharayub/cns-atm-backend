@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema({
     assignmentCode:{
         type:String,
         required:true,
-        unique:true
+        // unique:true
     },
     equipment:{
         type:mongoose.Schema.Types.ObjectId,
@@ -30,7 +30,6 @@ const orderSchema = new mongoose.Schema({
     },
     engineer:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true,
         ref:'Engineer'
     },
     completed:{

@@ -13,7 +13,7 @@ const locationSchema = new mongoose.Schema({
     description:{
         type:String,
         required:true
-    },
+    }
 })
 
 const Location = mongoose.model('Location',locationSchema)
