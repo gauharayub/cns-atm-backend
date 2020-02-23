@@ -69,7 +69,8 @@ router.get('/order/:id',async (req,res)=>{
             assignmentNumber:order.number,
             equipmentCode:order.task.maintenancePlan.equip.equipmentCode,
             equipmentName:order.task.maintenancePlan.equip.description,
-            description:order.work
+            description:order.work,
+            location:order.location
         }
         res.status(200).send(data)
     }
@@ -94,7 +95,8 @@ router.get('/compliance/:id',async(req,res)=>{
             equipmentName:order.task.maintenancePlan.equip.description,
             description:order.work,
             status:order.status,
-            engineerId:order.engineer.engineerID
+            engineerId:order.engineer.engineerID,
+            location:order.location
         }
         res.status(200).send(data)
     }

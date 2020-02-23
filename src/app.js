@@ -66,6 +66,7 @@ const orderGeneration = async()=>{
                         equipment:maintenanceList[j].equipment,
                         work:'Cleaning of metal-part',
                         task:maintenanceList[j].task,
+                        location:location[i].description
                     })
                     num++
                         await order.save()

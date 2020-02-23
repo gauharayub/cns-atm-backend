@@ -32,6 +32,10 @@ const orderSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'Engineer'
     },
+    location:{
+        type:String,
+        required:true
+    },
     completed:{
         type:String,
         required:true,
