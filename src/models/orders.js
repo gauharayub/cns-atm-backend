@@ -49,10 +49,11 @@ const orderSchema = new mongoose.Schema({
     dateOfCompletion:{
         type:Date
     },
-    workImage:{
+    workImage:[
+        {
         type:Buffer
-//Buffer type is used to store binary data in mongodb database.....
-    }
+//Buffer type is used to store binary data(images,docs and other files) in mongodb database.....
+    }]
 
 })
 

@@ -101,7 +101,7 @@ router.get('/compliance/:id',async(req,res)=>{
         res.status(200).send(data)
     }
     catch(e){
-        res.status(404).send()
+        res.status(404).send({error:'Could not find the requested resource'})
     }
 })
 
@@ -114,10 +114,8 @@ router.post('/generateorder',async(req,res)=>{
         res.status(201).send('Order generated successfully')
     }
     catch(e){
-        res.status(500).send('Error generating the object')
+        res.status(500).send({error:'Error generating the object'})
     }
-   
-
 })
 
 
@@ -144,12 +142,12 @@ router.post('/uploadphoto/:id',image.single('workImage'),async (req,res)=>{
         //uploaded file will be saved in file attribute of request object.....
         const file = req.file
         const order = await Order.findById(req.params.id)
-        order.workImage = file
+        order.workImage.push(file)
         await order.save()
         res.status(201).send('File uploaded successfully')
     }
     catch(e){
-        res.status(500).send('Error uploading the file')
+        res.status(415).send({error:'Error uploading the file. Upload only in jpg, jpeg or png format'})
     }
 })
 
