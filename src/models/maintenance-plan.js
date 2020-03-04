@@ -1,21 +1,19 @@
 const mongoose = require('mongoose')
 
 const maintenanceSchema = new mongoose.Schema({
-    dateOfCreation:{
-        type:Date,
-        required:true,
-        default:Date.now
-    },
     cycle:{
         type:String,
         required:true,
+        default:"1 month"
     },
-    equip:{
+    equipment:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
         ref:'Equipment'
     },
-    tasks:{type:mongoose.Schema.Types.ObjectId,ref:'Tasklist'}
+    task:{type:mongoose.Schema.Types.ObjectId,ref:'Tasklist'}
+},{
+    timestamps:true
 })
 
 const MaintenancePlan = mongoose.model('MaintenancePlan',maintenanceSchema)

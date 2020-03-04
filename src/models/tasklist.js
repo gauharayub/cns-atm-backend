@@ -15,8 +15,6 @@ const tasklistSchema = new mongoose.Schema({
         required:true,
         ref:'MaintenancePlan'
     }
-},{
-    timestamps:true
 })
 
 const Tasklist = mongoose.model('Tasklist',tasklistSchema)

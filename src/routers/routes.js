@@ -1,8 +1,10 @@
 const express = require('express')
 const router = new express.Router()
 const Equipment = require('../models/equipment-model')
+const Engineer = require('../models/engineer')
 const Tasklist = require('../models/tasklist')
 const Order = require('../models/orders')
+const multer = require('multer')
 
 
 //end-point for retrieving list of all orders.....
@@ -67,7 +69,8 @@ router.get('/order/:id',async (req,res)=>{
             assignmentNumber:order.number,
             equipmentCode:order.task.maintenancePlan.equip.equipmentCode,
             equipmentName:order.task.maintenancePlan.equip.description,
-            description:order.work
+            description:order.work,
+            location:order.location
         }
         res.status(200).send(data)
     }
@@ -81,6 +84,7 @@ router.get('/compliance/:id',async(req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
         await order.populate('task')
+                   .populate('task.engineer')
                    .populate('task.maintenancePlan')
                    .populate('task.maintenancePlan.equip')
         console.log(order)
@@ -91,11 +95,13 @@ router.get('/compliance/:id',async(req,res)=>{
             equipmentName:order.task.maintenancePlan.equip.description,
             description:order.work,
             status:order.status,
+            engineerId:order.engineer.engineerID,
+            location:order.location
         }
         res.status(200).send(data)
     }
     catch(e){
-        res.status(404).send()
+        res.status(404).send({error:'Could not find the requested resource'})
     }
 })
 
@@ -108,15 +114,41 @@ router.post('/generateorder',async(req,res)=>{
         res.status(201).send('Order generated successfully')
     }
     catch(e){
-        res.status(500).send('Error generating the object')
+        res.status(500).send({error:'Error generating the object'})
     }
-   
-
 })
 
+
+//object for upload customization.....
+const image = multer({
+    limits:{
+        fileSize:10000000    //file-size in bytes.....
+    },
+//to allow only particular files to be uploaded ......    
+    fileFilter(req,file,cb){
+//match function accepts a regular expression(regex) to match with the filename......        
+        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+            return cb(new Error('Please upload jpeg,jpg or png files'))
+        }
+// call the callback to stop filterfunction with true as a sign that correct file is uploaded.       
+            cb(undefined,true)
+    }
+})
+
+
 //end-point for photo/document uploads..
-router.post('/uploadphoto',async (req,res)=>{
-    
+router.post('/uploadphoto/:id',image.single('workImage'),async (req,res)=>{
+    try{
+        //uploaded file will be saved in file attribute of request object.....
+        const file = req.file
+        const order = await Order.findById(req.params.id)
+        order.workImage.push(file)
+        await order.save()
+        res.status(201).send('File uploaded successfully')
+    }
+    catch(e){
+        res.status(415).send({error:'Error uploading the file. Upload only in jpg, jpeg or png format'})
+    }
 })
 
 
