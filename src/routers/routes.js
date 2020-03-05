@@ -61,14 +61,17 @@ router.get('/engineers',async (req,res)=>{
 router.get('/order/:id',async (req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
-        await order.populate('task')
-                   .populate('task.maintenancePlan')
-                   .populate('task.maintenancePlan.equip')
+        await order.populate({
+            path:'task',
+            populate:{path:'maintenancePlan',
+                      populate:'equipment'
+        }
+        }).execPopulate()
         console.log(order)
         const data = {
             assignmentNumber:order.number,
-            equipmentCode:order.task.maintenancePlan.equip.equipmentCode,
-            equipmentName:order.task.maintenancePlan.equip.description,
+            equipmentCode:order.task.maintenancePlan.equipment.equipmentCode,
+            equipmentName:order.task.maintenancePlan.equipment.description,
             description:order.work,
             location:order.location
         }
@@ -83,19 +86,21 @@ router.get('/order/:id',async (req,res)=>{
 router.get('/compliance/:id',async(req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
-        await order.populate('task')
-                   .populate('task.engineer')
-                   .populate('task.maintenancePlan')
-                   .populate('task.maintenancePlan.equip')
+        await order.populate({
+            path:'task',
+            populate:{
+                path:'maintenancePlan',
+                populate:'equipment'
+            }
+        }).execPopulate()
         console.log(order)
         const data = {
             tasklist:order.task.tasks,
             assignmentNumber:order.number,
-            equipmentCode:order.task.maintenancePlan.equip.equipmentCode,
-            equipmentName:order.task.maintenancePlan.equip.description,
+            equipmentCode:order.task.maintenancePlan.equipment.equipmentCode,
+            equipmentName:order.task.maintenancePlan.equipment.description,
             description:order.work,
             status:order.status,
-            engineerId:order.engineer.engineerID,
             location:order.location
         }
         res.status(200).send(data)

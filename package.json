@@ -4,20 +4,24 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon src/app.js"
+    "dev": "env-cmd -f ./config/dev.env nodemon src/app.js",
+    "test":"env-cmd -f ./config/dev.env node src/messaging/send_email.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^6.5.3",
     "datejs": "^1.0.0-rc3",
     "express": "^4.17.1",
     "mongodb": "^3.5.2",
     "mongoose": "^5.8.9",
     "multer": "^1.4.2",
     "node-cron": "^2.0.3",
-    "timespan": "^2.3.0"
+    "timespan": "^2.3.0",
+    "twilio": "^3.39.5"
   },
   "devDependencies": {
+    "env-cmd": "^10.1.0",
     "mongo-seeding": "^3.4.0-alpha.1",
     "nodemon": "^2.0.2"
   }
