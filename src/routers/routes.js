@@ -26,7 +26,7 @@ router.get('/get-orders',cors(corsOptions),async(req,res)=>{
 
 
 //end-point for adding remarks after completion of order.....
-router.patch('/updateorder/:id',async(req,res)=>{
+router.patch('/updateorder/:id',cors(corsOptions),async(req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
         order.remarks = req.body.remarks
@@ -41,7 +41,7 @@ router.patch('/updateorder/:id',async(req,res)=>{
 
 
 //end-point for getting list of all equipments.....
-router.get('/equipment-list',async(req,res)=>{
+router.get('/equipment-list',cors(corsOptions),async(req,res)=>{
     try{
         const list = await Equipment.find()
         res.status(200).send(list)
@@ -53,7 +53,7 @@ router.get('/equipment-list',async(req,res)=>{
 })
 
 //end-point for getting list of engineers to be used in dropdown list of engineers.....
-router.get('/engineers',async (req,res)=>{
+router.get('/engineers',cors(corsOptions),async (req,res)=>{
     try{
         const list = await Engineer.find()
         res.status(200).send(list)
@@ -64,7 +64,7 @@ router.get('/engineers',async (req,res)=>{
 })
 
 //end point for form to be filled by suprintendent......
-router.get('/order/:id',async (req,res)=>{
+router.get('/order/:id',cors(corsOptions),async (req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
         await order.populate('task')
@@ -86,7 +86,7 @@ router.get('/order/:id',async (req,res)=>{
 })
 
 //end-point for form to be filled by engineer after completion of his assignment....
-router.get('/compliance/:id',async(req,res)=>{
+router.get('/compliance/:id',cors(corsOptions),async(req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
         await order.populate('task')

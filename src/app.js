@@ -26,7 +26,7 @@ var num = 1111
 //function to generate orders every cycle of task.
 const orderGeneration = async()=>{
 //runs every second
-    cron.schedule('*/1 * * * * *',async ()=>{
+    cron.schedule('*/1 * * * *',async ()=>{
         const locations = await Location.find()
         const equipment = await Equipment.find()
         // console.log(equipment[0])
