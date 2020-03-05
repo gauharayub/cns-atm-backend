@@ -5,10 +5,16 @@ const Engineer = require('../models/engineer')
 const Tasklist = require('../models/tasklist')
 const Order = require('../models/orders')
 const multer = require('multer')
+const cors = require('cors')
 
+//entertain every request
+const corsOptions = {
+    origin: '*'
+}
 
 //end-point for retrieving list of all orders.....
-router.get('/get-orders',async(req,res)=>{
+//inserted cors with origin as * before callback function
+router.get('/get-orders',cors(corsOptions),async(req,res)=>{
     try{
         const list = await Order.find()
         res.status(200).send(list)

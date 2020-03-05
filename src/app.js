@@ -22,7 +22,7 @@ app.use(express.json())
 app.use(router)
 app.use(history)
 
-var num = 1
+var num = 1111
 //function to generate orders every cycle of task.
 const orderGeneration = async()=>{
 //runs every second
@@ -66,7 +66,7 @@ const orderGeneration = async()=>{
                         equipment:maintenanceList[j].equipment,
                         work:'Cleaning of metal-part',
                         task:maintenanceList[j].task,
-                        location:location[i].description
+                        location:locations[i].description
                     })
                     num++
                         await order.save()
@@ -79,7 +79,7 @@ const orderGeneration = async()=>{
     })
 }
 
-// orderGeneration()
+orderGeneration()
 
 
 //listen on specified port.....
