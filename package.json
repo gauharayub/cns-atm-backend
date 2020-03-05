@@ -5,12 +5,13 @@
   "main": "app.js",
   "scripts": {
     "dev": "env-cmd -f ./config/dev.env nodemon src/app.js",
-    "test":"env-cmd -f ./config/dev.env node src/messaging/send_email.js"
+    "test": "env-cmd -f ./config/dev.env node src/messaging/send_email.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@sendgrid/mail": "^6.5.3",
+    "cors": "^2.8.5",
     "datejs": "^1.0.0-rc3",
     "express": "^4.17.1",
     "mongodb": "^3.5.2",
