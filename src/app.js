@@ -14,7 +14,7 @@ const history = require('./routers/history-routes')
 //creates an express web-server
 const app=express()
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT
 //middleware function that recognizes request data as json and parses it to object(req.body)....
 app.use(express.json())
 
