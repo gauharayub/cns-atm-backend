@@ -6,6 +6,8 @@ const Tasklist = require('../models/tasklist')
 const Order = require('../models/orders')
 const multer = require('multer')
 const cors = require('cors')
+const sendMessage = require('../messaging/send_email')
+const sendSMS = require('../messaging/send_sms')
 
 //entertain every request
 const corsOptions = {
@@ -39,19 +41,6 @@ router.patch('/updateorder/:id',cors(corsOptions),async(req,res)=>{
     }
 })
 
-
-//end-point for getting list of all equipments.....
-router.get('/equipment-list',cors(corsOptions),async(req,res)=>{
-    try{
-        const list = await Equipment.find()
-        res.status(200).send(list)
-    }
-    catch(e){
-        res.status(404).send()
-    }
-    
-})
-
 //end-point for getting list of engineers to be used in dropdown list of engineers.....
 router.get('/engineers',cors(corsOptions),async (req,res)=>{
     try{
@@ -75,6 +64,7 @@ router.get('/order/:id',cors(corsOptions),async (req,res)=>{
         }).execPopulate()
         console.log(order)
         const data = {
+            tasklist:order.task.tasks,
             assignmentNumber:order.number,
             equipmentCode:order.task.maintenancePlan.equipment.equipmentCode,
             equipmentName:order.task.maintenancePlan.equipment.description,
@@ -118,7 +108,7 @@ router.get('/compliance/:id',cors(corsOptions),async(req,res)=>{
 
 
 //end-point for custom-generation of an assignment....
-router.post('/generateorder',async(req,res)=>{
+router.post('/generateorder',cors(corsOptions),async(req,res)=>{
     try{
         const order  = new Order(req.body)
         await order.save()
@@ -148,7 +138,7 @@ const image = multer({
 
 
 //end-point for photo/document uploads..
-router.post('/uploadphoto/:id',image.single('workImage'),async (req,res)=>{
+router.post('/uploadphoto/:id',cors(corsOptions),image.single('workImage'),async (req,res)=>{
     try{
         //uploaded file will be saved in file attribute of request object.....
         const file = req.file
@@ -160,6 +150,17 @@ router.post('/uploadphoto/:id',image.single('workImage'),async (req,res)=>{
     catch(e){
         res.status(415).send({error:'Error uploading the file. Upload only in jpg, jpeg or png format'})
     }
+})
+
+//end-point for sending email and sms to the alloted enginner
+router.post('/submit/:id',async(req,res)=>{
+    const engineer = await Engineer.find({
+        engineerID:req.params.id
+    })
+    const emailID = engineer.emailID
+    const phoneNumber = engineer.phoneNumber
+    sendMessage(emailID,'hello','text-here')
+    sendSMS(phoneNumber,'text-here')
 })
 
 

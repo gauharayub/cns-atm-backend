@@ -10,6 +10,5 @@ const sendMessage = (reciepent,subject,message)=>{
       })
       console.log('message-sent')
 }
-sendMessage()
 
 module.exports = sendMessage

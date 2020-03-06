@@ -49,6 +49,10 @@ const orderSchema = new mongoose.Schema({
     dateOfCompletion:{
         type:Date
     },
+    cycle:{
+        type:String,
+        required:true
+    },
     workImage:[
         {
         type:Buffer
