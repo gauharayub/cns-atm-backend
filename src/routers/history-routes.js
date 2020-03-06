@@ -44,25 +44,31 @@ router.get('/completed-orders',cors(corsOptions),async (req,res)=>{
     }
 })
 
-router.get('/orders/:cycle',cors(corsOptions),(req,res)=>{
+//end-point for getting orders according to their cycle
+router.get('/orders/:cycle',cors(corsOptions),async (req,res)=>{
     try{
         if(req.params.cycle=="daily"){
-            const orders = Order.find({
+            const orders = await Order.find({
                 cycle:"daily"
             })
+            res.status(200).send(orders)
         }
-        else if(req.params.cycle="weekly"){
-            const orders = Order.find({
+        else if(req.params.cycle=="weekly"){
+            const orders = await Order.find({
                 cycle:"weekly"
             })
+            res.status(200).send(orders)
         }
-        // else{
-        //     const orders = 
-        // }
-        
+
+        else{
+            const orders = await Order.find({
+                cycle:req.params.cycle+" month"
+            })
+            res.status(200).send(orders)
+        }
     }
     catch(e){
-
+        res.status(404).send()
     }
 })
 

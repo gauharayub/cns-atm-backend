@@ -53,6 +53,10 @@ const orderSchema = new mongoose.Schema({
     dateOfCompletion:{
         type:Date
     },
+    equipmentCode:{
+        type:String,
+        required:true,
+    },
     cycle:{
         type:String,
         required:true
