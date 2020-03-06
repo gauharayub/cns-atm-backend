@@ -59,6 +59,7 @@ router.get('/orders/:cycle',cors(corsOptions),async (req,res)=>{
             })
             res.status(200).send(orders)
         }
+
         else{
             const orders = await Order.find({
                 cycle:req.params.cycle+" month"
