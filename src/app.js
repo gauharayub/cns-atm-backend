@@ -26,15 +26,14 @@ var num = 1111
 //function to generate orders every cycle of task.
 const orderGeneration = async()=>{
 //runs every second
-    cron.schedule('*/1 * * * *',async ()=>{
+    cron.schedule('*/1 * * * * *',async ()=>{
         const locations = await Location.find()
         const equipment = await Equipment.find()
-        // console.log(equipment[0])
         for(let i=0;i<locations.length;i++){
             await locations[i].populate('equipment').execPopulate()
             await locations[i].populate('equipment.maintenancePlanList').execPopulate()
             const maintenanceList = locations[i].equipment.maintenancePlanList
-            // console.log(maintenanceList)
+        
             for(let j=0;j<maintenanceList.length;j++){
                 let current = Date.now()
                 let updated = Date.parse(maintenanceList[j].updatedAt)
@@ -43,17 +42,16 @@ const orderGeneration = async()=>{
                 let tspan = new timespan.TimeSpan(current-updated)
 
 //parse months from cycle string.....
-                let months = maintenanceList[j].cycle
+                let cycle = maintenanceList[j].cycle
                 let days = 1
-                if(months=="daily"){
+                if(cycle=="daily"){
                     days = 1
                 }
-                else if(months=="weekly"){
+                else if(cycle=="weekly"){
                     days = 7
                 }
                 else{
-                    month= parseInt(months.replace(/[^0-9\.]/g, ''), 10)
-                    console.log(month)
+                    month= parseInt(cycle.replace(/[^0-9\.]/g, ''), 10)
                     days  = month*30
                 }
 
@@ -66,7 +64,9 @@ const orderGeneration = async()=>{
                         equipment:maintenanceList[j].equipment,
                         work:'Cleaning of metal-part',
                         task:maintenanceList[j].task,
-                        location:locations[i].description
+                        location:locations[i].description,
+                        cycle:maintenanceList[j].cycle,
+                        equipmentCode:locations[i].equipment.equipmentCode
                     })
                     num++
                         await order.save()
