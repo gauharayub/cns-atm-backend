@@ -48,7 +48,7 @@ const orderSchema = new mongoose.Schema({
     status:{
         type:String,
         required:true,
-        default:"No"
+        default:"Unassigned"
     },
     dateOfCompletion:{
         type:Date

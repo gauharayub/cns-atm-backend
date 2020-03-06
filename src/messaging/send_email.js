@@ -5,14 +5,14 @@ const sendMessage = (recipient,subject,message)=>{
   try{
       sgMail.send({
         to:recipient,
-        from: 'storminggak16@gmail.com',
+        from: 'gauharayub14@gmail.com',
         subject,
         text: message
       })
       console.log('message-sent')
   }
   catch(e){
-      console.log('error sending the sms')
+      console.log('error sending the email')
   }  
 }
 
