@@ -4,6 +4,7 @@ require('./db/mongoose')
 const router = require('./routers/routes')
 const history = require('./routers/history-routes')
 const orderGeneration = require('./utils/orderGeneration')
+const bodyParser = require('body-parser')
 
 
 //creates an express web-server
@@ -12,6 +13,7 @@ const app=express()
 const port = process.env.PORT
 //middleware function that recognizes request data as json and parses it to object(req.body)....
 app.use(express.json())
+app.use(express.text())
 
 //register routers on express app....
 app.use(router)

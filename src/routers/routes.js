@@ -160,23 +160,33 @@ router.post('/uploadphoto/:id',cors(corsOptions),image.single('workImage'),async
 //end-point for employee-form submission 
 router.post('/submit-form',cors(corsOptions),async(req,res)=>{
         try{
-            console.log(req.body)
+            const body = JSON.parse(req.body)
             const engineer = await Engineer.findOne({
-                engineerID:req.body.engineerID
+                engineerID:body.engineerID
             })
-            const order = await Order.findById(req.body.orderId)
-            order.remarks = req.body.additionalRemarks
+            console.log(engineer)
+            const order = await Order.findById(body.orderId)
+            order.remarks =body.additionalRemarks
             order.engineer = engineer._id
+            order.status = "assigned"
             await order.save()
             engineer.orders.push(order._id)
             const emailID = engineer.emailID
             const phoneNumber = engineer.phoneNumber
             sendMessage(emailID,'hello','text-here')
             sendSMS(phoneNumber,'text-here')
+            res.status(200).send()
         }
         catch(e){
-            res.status(500).send({error:"server error"})
+            res.status(500).send(e)
         }
+})
+
+router.post('/submit-compliance',cors(corsOptions),async(req,res)=>{
+        const order = Order.findById(req.body.orderId)
+        order.completed = req.body.completed
+
+        
 })
 
 
