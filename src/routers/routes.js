@@ -69,7 +69,9 @@ router.get('/order/:id',cors(corsOptions),async (req,res)=>{
             equipmentCode:order.task.maintenancePlan.equipment.equipmentCode,
             equipmentName:order.task.maintenancePlan.equipment.description,
             description:order.work,
-            location:order.location
+            location:order.location,
+            _id:order._id,
+            cycle:order.cycle
         }
         res.status(200).send(data)
     }
@@ -97,7 +99,9 @@ router.get('/compliance/:id',cors(corsOptions),async(req,res)=>{
             equipmentName:order.task.maintenancePlan.equipment.description,
             description:order.work,
             status:order.status,
-            location:order.location
+            location:order.location,
+            _id:order._id,
+            cycle:order.cycle
         }
         res.status(200).send(data)
     }
@@ -152,15 +156,27 @@ router.post('/uploadphoto/:id',cors(corsOptions),image.single('workImage'),async
     }
 })
 
-//end-point for sending email and sms to the alloted enginner
-router.post('/submit/:id',async(req,res)=>{
-    const engineer = await Engineer.find({
-        engineerID:req.params.id
-    })
-    const emailID = engineer.emailID
-    const phoneNumber = engineer.phoneNumber
-    sendMessage(emailID,'hello','text-here')
-    sendSMS(phoneNumber,'text-here')
+
+//end-point for employee-form submission 
+router.post('/submit-form',cors(corsOptions),async(req,res)=>{
+        try{
+            console.log(req.body)
+            const engineer = await Engineer.findOne({
+                engineerID:req.body.engineerID
+            })
+            const order = await Order.findById(req.body.orderId)
+            order.remarks = req.body.additionalRemarks
+            order.engineer = engineer._id
+            await order.save()
+            engineer.orders.push(order._id)
+            const emailID = engineer.emailID
+            const phoneNumber = engineer.phoneNumber
+            sendMessage(emailID,'hello','text-here')
+            sendSMS(phoneNumber,'text-here')
+        }
+        catch(e){
+            res.status(500).send({error:"server error"})
+        }
 })
 
 
