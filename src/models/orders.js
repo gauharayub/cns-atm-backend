@@ -6,6 +6,10 @@ const orderSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
+    equipmentCode:{
+        type:String,
+        required:true
+    },
     assignmentCode:{
         type:String,
         required:true,

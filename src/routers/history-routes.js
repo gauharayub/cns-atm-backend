@@ -56,9 +56,9 @@ router.get('/orders/:cycle',cors(corsOptions),(req,res)=>{
                 cycle:"weekly"
             })
         }
-        else{
-            const orders = 
-        }
+        // else{
+        //     const orders = 
+        // }
         
     }
     catch(e){
