@@ -21,22 +21,22 @@ router.get('/equipment-list',cors(corsOptions),async(req,res)=>{
     
 })
 
-//end-point for getting list of all employees of Airport Authority of India....
+//end-point for getting list of all employees....
 router.get('/employees',cors(corsOptions),async(req,res)=>{
     try{
         const list = await Employee.find()
         res.status(200).send(list)
     }
     catch(e){
-        res.status(404).send({error:"List not found"})
+        res.status(404).send({error:"Could not fetch the list"})
     }
 })
 
-//end-point for getting list of all completed orders...
-router.get('/completed-orders',cors(corsOptions),async (req,res)=>{
+//end-point for getting list of all completed or pending orders...
+router.get('/orders/:completed',cors(corsOptions),async (req,res)=>{
     try{
         const orders = await Order.find({
-            completed:"Yes"
+            completed:req.params.completed
         })
     }
     catch(e){
@@ -69,6 +69,18 @@ router.get('/orders/:cycle',cors(corsOptions),async (req,res)=>{
     }
     catch(e){
         res.status(404).send()
+    }
+})
+
+//end-point for getting list of all locations in the plant
+router.get('/locations',cors(corsOptions),async(req,res)=>{
+    try{
+        const locations = await Location.find()
+        locations.populate('equipment').execPopulate()
+        res.status(200).send(locations)
+    }
+    catch(e){
+        res.status(500).send({error:"Could not fetch locations"})
     }
 })
 

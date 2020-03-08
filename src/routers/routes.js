@@ -8,6 +8,7 @@ const multer = require('multer')
 const cors = require('cors')
 const sendMessage = require('../messaging/send_email')
 const sendSMS = require('../messaging/send_sms')
+const sharp = require('sharp')
 
 //entertain every request
 const corsOptions = {
@@ -23,21 +24,6 @@ router.get('/get-orders',cors(corsOptions),async(req,res)=>{
     }
     catch(e){
         res.status(500).send('Server Error')
-    }
-})
-
-
-//end-point for adding remarks after completion of order.....
-router.patch('/updateorder/:id',cors(corsOptions),async(req,res)=>{
-    try{
-        const order = await Order.findById(req.params.id)
-        order.remarks = req.body.remarks
-        order.completed = req.body.completed
-        await order.save()
-        res.send(order)
-    }
-    catch(e){
-        res.status(404).send()
     }
 })
 
@@ -125,7 +111,7 @@ router.post('/generateorder',cors(corsOptions),async(req,res)=>{
 
 
 //object for upload customization.....
-const image = multer({
+const upload = multer({
     limits:{
         fileSize:10000000    //file-size in bytes.....
     },
@@ -135,21 +121,26 @@ const image = multer({
         if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
             return cb(new Error('Please upload jpeg,jpg or png files'))
         }
-// call the callback to stop filterfunction with true as a sign that correct file is uploaded.       
+// call the callback to stop filterfunction with true as a sign that correct file is uploaded.
             cb(undefined,true)
     }
 })
 
 
 //end-point for photo/document uploads..
-router.post('/uploadphoto/:id',cors(corsOptions),image.single('workImage'),async (req,res)=>{
+router.post('/uploadphoto/:id',upload.array('workImage',20),async(req,res)=>{
     try{
         //uploaded file will be saved in file attribute of request object.....
-        const file = req.file
+        // const file =  await sharp(req.file.buffer).resize({ width:500, height: 300}).png().toBuffer()
         const order = await Order.findById(req.params.id)
-        order.workImage.push(file)
+        const files = req.files.map((file)=>{
+                 return file.buffer
+        })
+        console.log(files)
+        order.workImage = files
         await order.save()
-        res.status(201).send('File uploaded successfully')
+        // res.set('Content-Type','image/png')
+        res.status(201).send('files uploaded')
     }
     catch(e){
         res.status(415).send({error:'Error uploading the file. Upload only in jpg, jpeg or png format'})
@@ -171,6 +162,7 @@ router.post('/submit-form',cors(corsOptions),async(req,res)=>{
             order.status = "assigned"
             await order.save()
             engineer.orders.push(order._id)
+            await engineer.save()
             const emailID = engineer.emailID
             const phoneNumber = engineer.phoneNumber
             sendMessage(emailID,'hello','text-here')
@@ -185,6 +177,7 @@ router.post('/submit-form',cors(corsOptions),async(req,res)=>{
 router.post('/submit-compliance',cors(corsOptions),async(req,res)=>{
         const order = Order.findById(req.body.orderId)
         order.completed = req.body.completed
+
 
         
 })
