@@ -127,27 +127,6 @@ const upload = multer({
 })
 
 
-//end-point for photo/document uploads..
-router.post('/uploadphoto/:id',upload.array('workImage',20),async(req,res)=>{
-    try{
-        //uploaded file will be saved in file attribute of request object.....
-        // const file =  await sharp(req.file.buffer).resize({ width:500, height: 300}).png().toBuffer()
-        const order = await Order.findById(req.params.id)
-        const files = req.files.map((file)=>{
-                 return file.buffer
-        })
-        console.log(files)
-        order.workImage = files
-        await order.save()
-        // res.set('Content-Type','image/png')
-        res.status(201).send('files uploaded')
-    }
-    catch(e){
-        res.status(415).send({error:'Error uploading the file. Upload only in jpg, jpeg or png format'})
-    }
-})
-
-
 //end-point for employee-form submission 
 router.post('/submit-form',cors(corsOptions),async(req,res)=>{
         try{
@@ -170,16 +149,30 @@ router.post('/submit-form',cors(corsOptions),async(req,res)=>{
             res.status(200).send()
         }
         catch(e){
-            res.status(500).send(e)
+            res.status(400).send({error:"Error parsing the body-data"})
         }
 })
 
-router.post('/submit-compliance',cors(corsOptions),async(req,res)=>{
+router.post('/submit-compliance',cors(corsOptions),upload.array('workImage',20),async(req,res)=>{
+    try{
+//uploaded file will be saved in file attribute of request object.....
+// const file =  await sharp(req.file.buffer).resize({ width:500, height: 300}).png().toBuffer()
         const order = Order.findById(req.body.orderId)
         order.completed = req.body.completed
 
-
+        const files = req.files.map((file)=>{
+            return file.buffer
+        })
+        // console.log(files)
+        order.workImage = files
         
+        await order.save()
+        // res.set('Content-Type','image/png')
+        res.status(201).send('files uploaded')
+    }
+    catch(e){
+        res.status(415).send({error:'Error uploading the file. Upload only in jpg, jpeg or png format'})
+    }
 })
 
 
