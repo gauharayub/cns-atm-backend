@@ -9,6 +9,31 @@ const corsOptions = {
     origin: '*'
 }
 
+
+//end-point for retrieving list of all orders.....
+//inserted cors with origin as * before callback function
+router.get('/get-orders',cors(corsOptions),async(req,res)=>{
+    try{
+        const list = await Order.find()
+        res.status(200).send(list)
+    }
+    catch(e){
+        res.status(500).send('Server Error')
+    }
+})
+
+//end-point for getting list of engineers to be used in dropdown list of engineers.....
+router.get('/engineers',cors(corsOptions),async (req,res)=>{
+    try{
+        const list = await Engineer.find()
+        res.status(200).send(list)
+    }
+    catch(e){
+        res.status(404).send()
+    }
+})
+
+
 //end-point for getting list of all equipments.....
 router.get('/equipment-list',cors(corsOptions),async(req,res)=>{
     try{

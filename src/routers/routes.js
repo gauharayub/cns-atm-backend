@@ -15,29 +15,6 @@ const corsOptions = {
     origin: '*'
 }
 
-//end-point for retrieving list of all orders.....
-//inserted cors with origin as * before callback function
-router.get('/get-orders',cors(corsOptions),async(req,res)=>{
-    try{
-        const list = await Order.find()
-        res.status(200).send(list)
-    }
-    catch(e){
-        res.status(500).send('Server Error')
-    }
-})
-
-//end-point for getting list of engineers to be used in dropdown list of engineers.....
-router.get('/engineers',cors(corsOptions),async (req,res)=>{
-    try{
-        const list = await Engineer.find()
-        res.status(200).send(list)
-    }
-    catch(e){
-        res.status(404).send()
-    }
-})
-
 //end point for form to be filled by suprintendent......
 router.get('/order/:id',cors(corsOptions),async (req,res)=>{
     try{
@@ -109,45 +86,6 @@ router.post('/generateorder',cors(corsOptions),async(req,res)=>{
     }
 })
 
-
-//object for upload customization.....
-const upload = multer({
-    limits:{
-        fileSize:10000000    //file-size in bytes.....
-    },
-//to allow only particular files to be uploaded ......    
-    fileFilter(req,file,cb){
-//match function accepts a regular expression(regex) to match with the filename......        
-        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
-            return cb(new Error('Please upload jpeg,jpg or png files'))
-        }
-// call the callback to stop filterfunction with true as a sign that correct file is uploaded.
-            cb(undefined,true)
-    }
-})
-
-
-//end-point for photo/document uploads..
-router.post('/uploadphoto/:id',upload.array('workImage',20),async(req,res)=>{
-    try{
-        //uploaded file will be saved in file attribute of request object.....
-        // const file =  await sharp(req.file.buffer).resize({ width:500, height: 300}).png().toBuffer()
-        const order = await Order.findById(req.params.id)
-        const files = req.files.map((file)=>{
-                 return file.buffer
-        })
-        console.log(files)
-        order.workImage = files
-        await order.save()
-        // res.set('Content-Type','image/png')
-        res.status(201).send('files uploaded')
-    }
-    catch(e){
-        res.status(415).send({error:'Error uploading the file. Upload only in jpg, jpeg or png format'})
-    }
-})
-
-
 //end-point for employee-form submission 
 router.post('/submit-form',cors(corsOptions),async(req,res)=>{
         try{
@@ -170,16 +108,82 @@ router.post('/submit-form',cors(corsOptions),async(req,res)=>{
             res.status(200).send()
         }
         catch(e){
-            res.status(500).send(e)
+            res.status(400).send({error:"Error parsing the body-data"})
         }
 })
 
-router.post('/submit-compliance',cors(corsOptions),async(req,res)=>{
-        const order = Order.findById(req.body.orderId)
-        order.completed = req.body.completed
 
 
+//object for upload customization.....
+const upload = multer({
+    limits:{
+        fileSize:10000000    //file-size in bytes.....
+    },
+//to allow only particular files to be uploaded ......    
+    fileFilter(req,file,cb){
         
+//match function accepts a regular expression(regex) to match with the filename......        
+        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+            return cb(new Error('Please upload jpeg,jpg or png files'))
+        }
+// call the callback to stop filterfunction with true as a sign that correct file is uploaded.
+            cb(undefined,true)
+    }
+})
+
+
+//end-point for compliance form submission....
+router.post('/submit-compliance/:id',cors(corsOptions),upload.array('workImage',20),async(req,res)=>{
+    try{
+//uploaded file will be saved in file attribute of request object.....
+     // const file =  await sharp(req.file.buffer).resize({ width:500, height: 300}).png().toBuffer()
+        const order = await Order.findById(req.params.id)
+        const tasklist = JSON.parse(req.body.taskListValue)
+        const comments = JSON.parse(req.body.comments)
+        order.tasklist  = tasklist
+        order.comments = comments
+        const files = req.files.map((file)=>{
+            return file.buffer
+        })
+        order.workImage = files
+        await order.save()
+        res.status(201).send('files uploaded')
+    }
+    catch(e){
+        res.status(415).send({error:'Error uploading the file. Upload only in jpg, jpeg or png format'})
+    }
+})
+
+//end-point for getting approval form details...
+router.get('/approval-form/:id',async (req,res)=>{
+    try{
+        const order = await Order.findById(req.params.id)
+        await order.populate('task').execPopulate()
+        await order.populate('engineer').execPopulate()
+        const tasks  = order.task.tasks
+        let tasklist = []
+        tasks.forEach((task,i)=>{
+            tasklist.push({task:task,status:order.tasklist[i]})
+        })
+        console.log(tasklist)
+        const data = {
+            tasklist,
+            remarks:order.remarks,
+            description:order.work,
+            images:order.workImage,
+            status:order.status,
+            location:order.location,
+            equipmentCode:order.equipmentCode,
+            cycle:order.cycle,
+            assignmentCode:order.assignmentCode,
+            assignmentNumber:order.assignmentNumber,
+            enginner:order.engineer.name
+        }
+        res.status(200).send(data)
+    }
+    catch(e){
+        res.status(404).send({error:"Could not find the requested resource!"})
+    }
 })
 
 
