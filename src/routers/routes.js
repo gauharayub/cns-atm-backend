@@ -155,7 +155,7 @@ router.post('/submit-compliance/:id',cors(corsOptions),upload.array('workImage',
 })
 
 //end-point for getting approval form details...
-router.get('/approval-form/:id',async (req,res)=>{
+router.get('/approval-form/:id',cors(corsOptions),async (req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
         await order.populate('task').execPopulate()

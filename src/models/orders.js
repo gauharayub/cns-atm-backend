@@ -78,7 +78,6 @@ const orderSchema = new mongoose.Schema({
             type:String
         }
     ]
-
 })
 
 const Order = mongoose.model('Order',orderSchema)
