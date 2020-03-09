@@ -61,11 +61,21 @@ const orderSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    tasklist:[
+        {
+        type:String
+        }
+    ],
     workImage:
     [
         {
         type:Buffer
 //Buffer type is used to store binary data(images,docs and other files) in mongodb database.....
+        }
+    ],
+    comments:[
+        {
+            type:String
         }
     ]
 

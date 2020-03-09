@@ -5,7 +5,8 @@ const Order = require('../models/orders')
 const cron = require('node-cron')
 const timespan = require('timespan')
 
-
+//count of order number
+var num = 1111
 //function to generate orders every cycle of task.
 const orderGeneration = async()=>{
 //runs every second
