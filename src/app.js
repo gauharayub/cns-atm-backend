@@ -12,10 +12,10 @@ const path = require('path')
 const app=express()
 
 const port = process.env.PORT
-//middleware function that recognizes request data as json and parses it to object(req.body)....
+//request parsers for text and json data..
 app.use(express.json())
 app.use(express.text())
-app.use(express)
+app.use(express.static(path.join(__dirname,'../public')))
 
 //register routers on express app....
 app.use(router)

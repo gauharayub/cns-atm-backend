@@ -1,7 +1,10 @@
 const express = require('express')
 const router = new express.Router()
 const Employee = require('../models/employee')
+const Engineer = require('../models/engineer')
+const Equipment = require('../models/equipment-model')
 const Order = require('../models/orders')
+const Location = require('../models/location')
 const cors = require('cors')
 
 //entertain every request
@@ -101,7 +104,6 @@ router.get('/orders/:cycle',cors(corsOptions),async (req,res)=>{
 router.get('/locations',cors(corsOptions),async(req,res)=>{
     try{
         const locations = await Location.find()
-        locations.populate('equipment').execPopulate()
         res.status(200).send(locations)
     }
     catch(e){
