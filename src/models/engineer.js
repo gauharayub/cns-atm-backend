@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 
 const engineerSchema  = new mongoose.Schema({
     name:{
@@ -23,8 +25,17 @@ const engineerSchema  = new mongoose.Schema({
         type:String,
         required:true
     },
+    password:{
+        type:String,
+        required:true
+    },
     orders:[{type:mongoose.Schema.Types.ObjectId, ref:'Order'}]
 })
+
+//method to validate engineer..
+engineerSchema.methods.validatePassword = function(password){
+    return this.password === password
+}
 
 const Engineer = mongoose.model('Engineer',engineerSchema)
 
