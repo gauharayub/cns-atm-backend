@@ -6,6 +6,10 @@ const orderSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
+    equipmentCode:{
+        type:String,
+        required:true
+    },
     assignmentCode:{
         type:String,
         required:true,
@@ -44,17 +48,38 @@ const orderSchema = new mongoose.Schema({
     status:{
         type:String,
         required:true,
-        default:"No"
+        default:"Unassigned"
     },
     dateOfCompletion:{
         type:Date
     },
-    workImage:[
+    equipmentCode:{
+        type:String,
+        required:true,
+    },
+    cycle:{
+        type:String,
+        required:true
+    },
+    tasklist:[
+        {
+        type:String
+        }
+    ],
+    workImage:
+    [
         {
         type:Buffer
 //Buffer type is used to store binary data(images,docs and other files) in mongodb database.....
-    }]
-
+        }
+    ],
+    comments:[
+        {
+            type:String
+        }
+    ]
+},{
+    timestamps:true
 })
 
 const Order = mongoose.model('Order',orderSchema)

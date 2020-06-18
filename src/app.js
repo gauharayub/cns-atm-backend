@@ -1,85 +1,33 @@
 const express = require('express')
-const mongoose = require('mongoose')
-const Location = require('./models/location')
-const Equipment = require('./models/equipment-model')
-const MaintenancePlan = require('./models/maintenance-plan')
-const Order = require('./models/orders')
-const cron = require('node-cron')
-const timespan = require('timespan')
 require('./db/mongoose')
 const router = require('./routers/routes')
 const history = require('./routers/history-routes')
-
+const orderGeneration = require('./utils/orderGeneration')
+const path = require('path')
+const cors = require('cors')
 
 //creates an express web-server
 const app=express()
 
+//entertain all requests from any origin...
+app.use(cors())
+
 const port = process.env.PORT
-//middleware function that recognizes request data as json and parses it to object(req.body)....
+
+//request parsers for text and json data..
 app.use(express.json())
+app.use(express.text())
+
+//directory for serving static files...
+app.use(express.static(path.join(__dirname,'../public')))
 
 //register routers on express app....
 app.use(router)
 app.use(history)
 
-var num = 1111
-//function to generate orders every cycle of task.
-const orderGeneration = async()=>{
-//runs every second
-    cron.schedule('*/1 * * * *',async ()=>{
-        const locations = await Location.find()
-        const equipment = await Equipment.find()
-        // console.log(equipment[0])
-        for(let i=0;i<locations.length;i++){
-            await locations[i].populate('equipment').execPopulate()
-            await locations[i].populate('equipment.maintenancePlanList').execPopulate()
-            const maintenanceList = locations[i].equipment.maintenancePlanList
-            // console.log(maintenanceList)
-            for(let j=0;j<maintenanceList.length;j++){
-                let current = Date.now()
-                let updated = Date.parse(maintenanceList[j].updatedAt)
 
-//calculate time-diifference between current time and last update time....          
-                let tspan = new timespan.TimeSpan(current-updated)
-
-//parse months from cycle string.....
-                let months = maintenanceList[j].cycle
-                let days = 1
-                if(months=="daily"){
-                    days = 1
-                }
-                else if(months=="weekly"){
-                    days = 7
-                }
-                else{
-                    month= parseInt(months.replace(/[^0-9\.]/g, ''), 10)
-                    console.log(month)
-                    days  = month*30
-                }
-
-//check if cycle is reached or not.....            
-                if(tspan.totalDays()>=days){
-//create new order if cycle has completed for task....         
-                    const order = new Order({
-                        number:num,
-                        assignmentCode:'T-400',
-                        equipment:maintenanceList[j].equipment,
-                        work:'Cleaning of metal-part',
-                        task:maintenanceList[j].task,
-                        location:locations[i].description
-                    })
-                    num++
-                        await order.save()
-                        maintenanceList[j].updatedAt = current
-                        await maintenanceList[j].save()
-                        console.log(order)
-                    }
-                }
-        }
-    })
-}
-
-orderGeneration()
+//function to start cycle-based order generation...
+// orderGeneration()
 
 
 //listen on specified port.....

@@ -1,15 +1,19 @@
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const sendMessage = (reciepent,subject,message)=>{
-    sgMail.send({
-        to:reciepent,
+const sendMessage = (recipient,subject,message)=>{
+  try{
+      sgMail.send({
+        to:recipient,
         from: 'gauharayub14@gmail.com',
         subject,
         text: message
       })
       console.log('message-sent')
+  }
+  catch(e){
+      console.log('error sending the email')
+  }  
 }
-sendMessage()
 
 module.exports = sendMessage
