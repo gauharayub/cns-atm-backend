@@ -5,18 +5,13 @@ const Engineer = require('../models/engineer')
 const Tasklist = require('../models/tasklist')
 const Order = require('../models/orders')
 const multer = require('multer')
-const cors = require('cors')
 const sendMessage = require('../messaging/send_email')
 const sendSMS = require('../messaging/send_sms')
 const sharp = require('sharp')
 
-//entertain every request
-const corsOptions = {
-    origin: '*'
-}
 
 //end point for form to be filled by suprintendent......
-router.get('/order/:id',cors(corsOptions),async (req,res)=>{
+router.get('/order/:id',async (req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
         await order.populate({
@@ -25,6 +20,7 @@ router.get('/order/:id',cors(corsOptions),async (req,res)=>{
                       populate:'equipment'
         }
         }).execPopulate()
+        
         console.log(order)
         const data = {
             tasklist:order.task.tasks,
@@ -44,7 +40,7 @@ router.get('/order/:id',cors(corsOptions),async (req,res)=>{
 })
 
 //end-point for form to be filled by engineer after completion of his assignment....
-router.get('/compliance/:id',cors(corsOptions),async(req,res)=>{
+router.get('/compliance/:id',async(req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
         await order.populate({
@@ -75,7 +71,7 @@ router.get('/compliance/:id',cors(corsOptions),async(req,res)=>{
 
 
 //end-point for custom-generation of an assignment....
-router.post('/generateorder',cors(corsOptions),async(req,res)=>{
+router.post('/generateorder',async(req,res)=>{
     try{
         const order  = new Order(req.body)
         await order.save()
@@ -87,7 +83,7 @@ router.post('/generateorder',cors(corsOptions),async(req,res)=>{
 })
 
 //end-point for employee-form submission 
-router.post('/submit-form',cors(corsOptions),async(req,res)=>{
+router.post('/submit-form',async(req,res)=>{
         try{
             const body = JSON.parse(req.body)
             const engineer = await Engineer.findOne({
@@ -126,20 +122,22 @@ const upload = multer({
         if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
             return cb(new Error('Please upload jpeg,jpg or png files'))
         }
-// call the callback to stop filterfunction with true as a sign that correct file is uploaded.
+// call the callback to stop filter function with true as a sign that correct file is uploaded.
             cb(undefined,true)
     }
 })
 
 
 //end-point for compliance form submission....
-router.post('/submit-compliance/:id',cors(corsOptions),upload.array('workImage',20),async(req,res)=>{
+router.post('/submit-compliance/:id',upload.array('workImage',20),async(req,res)=>{
     try{
 //uploaded file will be saved in file attribute of request object.....
-     // const file =  await sharp(req.file.buffer).resize({ width:500, height: 300}).png().toBuffer()
+// const file =  await sharp(req.file.buffer).resize({ width:500, height: 300}).png().toBuffer()
         const order = await Order.findById(req.params.id)
         const tasklist = JSON.parse(req.body.taskListValue)
         const comments = JSON.parse(req.body.comments)
+        console.log(req.head)
+        console.log(req.files)
         order.tasklist  = tasklist
         order.comments = comments
         const files = req.files.map((file)=>{
@@ -155,7 +153,7 @@ router.post('/submit-compliance/:id',cors(corsOptions),upload.array('workImage',
 })
 
 //end-point for getting approval form details...
-router.get('/approval-form/:id',cors(corsOptions),async (req,res)=>{
+router.get('/approval-form/:id',async (req,res)=>{
     try{
         const order = await Order.findById(req.params.id)
         await order.populate('task').execPopulate()
