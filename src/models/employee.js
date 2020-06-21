@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const crypto = require('crypto')
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 const employeeSchema = new mongoose.Schema({
@@ -23,8 +23,27 @@ const employeeSchema = new mongoose.Schema({
 })
 
 //method to validate employee...
-employeeSchema.methods.validatePassword = function(password){
-    return this.password === password
+employeeSchema.methods.validatePassword = async function(password){
+    
+    const hash = this.password
+    const match = await bcrypt.compare(password, hash).catch((err) => console.log('caught it'))
+    return match
+
+}
+
+employeeSchema.methods.generateJWT = function(){
+
+    const user = this
+    const token  = jwt.sign({_id:user._id.toString()},process.env.JWT_SECRET)
+    return token
+
+}
+
+employeeSchema.methods.toJSON  = function(){
+    const user = this
+    const userObject = user.toObject()
+    delete userObject.password
+    return userObject
 }
 
 const Employee = mongoose.model('Employee',employeeSchema)

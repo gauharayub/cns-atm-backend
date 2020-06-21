@@ -2,6 +2,7 @@ const express = require('express')
 const router = new express.Router()
 const Equipment = require('../models/equipment-model')
 const Engineer = require('../models/engineer')
+const Employee = require('../models/employee')
 const Tasklist = require('../models/tasklist')
 const Order = require('../models/orders')
 const multer = require('multer')
@@ -10,20 +11,23 @@ const sendSMS = require('../messaging/send_sms')
 const sharp = require('sharp')
 const bcrypt = require('bcrypt')
 
-//hashing the password this many times with salt
-const saltRounds = 8;
+/* use the commented code below only for testing */
 
-//functoin to update all the passwords
+//hashing the password this many times with salt
+// const saltRounds = 8;
+
+// // function to update all the passwords
 // async function updatePass(){
 //     bcrypt.hash('sih12345', saltRounds,async function(err, hash) {
 //         // Store hash in your password DB.
-//         await Engineer.updateMany({},{'password':hash},(err,res)=>{
+//         await Employee.updateMany({},{'password':hash},(err,res)=>{
 //             console.log(err,res);
 //         })
 //     });
 
 // }
 // updatePass()
+
 
 //end point to check whether is logged in or not
 router.post('/verify', async (req, res) => {
@@ -39,28 +43,39 @@ router.post('/verify', async (req, res) => {
 
 })
 
-//end point for login 
+//end point for login which is common for engineer and employee 
 router.post('/login', async (req, res) => {
-    try {
-        if (req.body.email) {
-            const user = await Engineer.findOne({
-                emailID: req.body.email
-            })
-            if (user.length !== 0) {
-                try {
-                    const hash = user.password
-                    // console.log(hash)
-                    const match = await bcrypt.compare(req.body.password, hash).catch((err) => console.log('caught it'));;
 
-                    if (match) {
-                        //jwt tokens should be added here
-                        res.status(200).send({token:"encryptedTokenHere"})
-                    }
-                } catch (e) {
-                    res.status(400).send()
-                }
+    //find user in engineer..
+    const engineer = await Engineer.findOne({
+        emailID: req.body.email
+    })
+    console.log(engineer)
+
+    //find user in employee..
+    const employee = await Employee.findOne({
+        emailID:req.body.email
+    })
+
+    if (employee || engineer) {
+        try {
+
+            let user = employee
+
+            //if user is not employee then update user to engineer..
+            if(engineer){
+                user = engineer
+            }
+            //validate password of user....
+            if (user.validatePassword(req.body.password)) {
+            
+                //if user is validated then generate jwt token which will be stored in user's browser....
+                const token = user.generateJWT()
+                res.status(200).send({user,token})
 
             }
+        } 
+        catch (e) {
             res.status(400).send()
         }
 
@@ -94,7 +109,8 @@ router.get('/order/:id', async (req, res) => {
             cycle: order.cycle
         }
         res.status(200).send(data)
-    } catch (e) {
+    } 
+    catch (e) {
         res.status(404).send()
     }
 })
@@ -151,20 +167,25 @@ router.post('/submit-form', async (req, res) => {
         const engineer = await Engineer.findOne({
             engineerID: body.engineerID
         })
+
         console.log(engineer)
+
         const order = await Order.findById(body.orderId)
         order.remarks = body.additionalRemarks
         order.engineer = engineer._id
         order.status = "assigned"
+
         await order.save()
         engineer.orders.push(order._id)
         await engineer.save()
+
         const emailID = engineer.emailID
         const phoneNumber = engineer.phoneNumber
         sendMessage(emailID, 'hello', 'text-here')
         sendSMS(phoneNumber, 'text-here')
         res.status(200).send()
-    } catch (e) {
+    } 
+    catch (e) {
         res.status(400).send({
             error: "Error parsing the body-data"
         })
@@ -194,11 +215,14 @@ const upload = multer({
 //end-point for compliance form submission....
 router.post('/submit-compliance/:id', upload.array('workImage', 20), async (req, res) => {
     try {
+
         //uploaded file will be saved in file attribute of request object.....
+
         // const file =  await sharp(req.file.buffer).resize({ width:500, height: 300}).png().toBuffer()
         const order = await Order.findById(req.params.id)
         const tasklist = JSON.parse(req.body.taskListValue)
         const comments = JSON.parse(req.body.comments)
+
         console.log(req.head)
         console.log(req.files)
         order.tasklist = tasklist
@@ -209,7 +233,8 @@ router.post('/submit-compliance/:id', upload.array('workImage', 20), async (req,
         order.workImage = files
         await order.save()
         res.status(201).send('files uploaded')
-    } catch (e) {
+    }
+    catch (e) {
         res.status(415).send({
             error: 'Error uploading the file. Upload only in jpg, jpeg or png format'
         })
@@ -219,6 +244,7 @@ router.post('/submit-compliance/:id', upload.array('workImage', 20), async (req,
 //end-point for getting approval form details...
 router.get('/approval-form/:id', async (req, res) => {
     try {
+
         const order = await Order.findById(req.params.id)
         await order.populate('task').execPopulate()
         await order.populate('engineer').execPopulate()
@@ -230,6 +256,7 @@ router.get('/approval-form/:id', async (req, res) => {
                 status: order.tasklist[i]
             })
         })
+
         console.log(tasklist)
         const data = {
             tasklist,
@@ -244,8 +271,11 @@ router.get('/approval-form/:id', async (req, res) => {
             assignmentNumber: order.assignmentNumber,
             enginner: order.engineer.name
         }
+
         res.status(200).send(data)
-    } catch (e) {
+    } 
+    catch (e) {
+
         res.status(404).send({
             error: "Could not find the requested resource!"
         })
