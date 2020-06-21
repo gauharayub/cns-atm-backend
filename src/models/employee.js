@@ -19,7 +19,8 @@ const employeeSchema = new mongoose.Schema({
     password:{
         type:String,
         required:true
-    }
+    },
+    tokens:[{type:String, required:true}]
 })
 
 //method to validate employee...
@@ -31,10 +32,12 @@ employeeSchema.methods.validatePassword = async function(password){
 
 }
 
-employeeSchema.methods.generateJWT = function(){
+employeeSchema.methods.generateJWT = async function(){
 
     const user = this
     const token  = jwt.sign({_id:user._id.toString()},process.env.JWT_SECRET)
+    user.tokens.push(token)
+    await user.save()
     return token
 
 }

@@ -11,6 +11,7 @@ const sendSMS = require('../messaging/send_sms')
 const sharp = require('sharp')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const auth = require('../auth/auth')
 
 /* use the commented code below only for testing */
 
@@ -41,8 +42,6 @@ router.post('/verify', (req, res) => {
     } catch (e) {
         res.status(403).send("not logged in")
     }
-
-
 })
 
 //end point for login which is common for engineer and employee 
@@ -69,22 +68,21 @@ router.post('/login', async (req, res) => {
             //validate password of user....
             if (user.validatePassword(req.body.password)) {
                 //if user is validated then generate jwt token which will be stored in user's browser....
-                const token = user.generateJWT()
-                res.status(200).send({
-                    token
-                })
+                const token = await user.generateJWT()
+                res.status(200).send({user,token})
 
             }
         } catch (e) {
             res.status(400).send()
         }
+    } 
 
-    }
+    res.status(401).send()
 })
 
 
 //end point for form to be filled by suprintendent......
-router.get('/order/:id', async (req, res) => {
+router.get('/order/:id', auth ,async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)
         await order.populate({
@@ -113,7 +111,7 @@ router.get('/order/:id', async (req, res) => {
 })
 
 //end-point for form to be filled by engineer after completion of his assignment....
-router.get('/compliance/:id', async (req, res) => {
+router.get('/compliance/:id',auth, async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)
         await order.populate({
@@ -145,7 +143,7 @@ router.get('/compliance/:id', async (req, res) => {
 
 
 //end-point for custom-generation of an assignment....
-router.post('/generateorder', async (req, res) => {
+router.post('/generateorder',auth, async (req, res) => {
     try {
         const order = new Order(req.body)
         await order.save()
@@ -158,7 +156,7 @@ router.post('/generateorder', async (req, res) => {
 })
 
 //end-point for employee-form submission 
-router.post('/submit-form', async (req, res) => {
+router.post('/submit-form',auth, async (req, res) => {
     try {
         const body = JSON.parse(req.body)
         const engineer = await Engineer.findOne({
@@ -209,7 +207,7 @@ const upload = multer({
 
 
 //end-point for compliance form submission....
-router.post('/submit-compliance/:id', upload.array('workImage', 20), async (req, res) => {
+router.post('/submit-compliance/:id',auth, upload.array('workImage', 20), async (req, res) => {
     try {
 
         //uploaded file will be saved in file attribute of request object.....
@@ -237,7 +235,7 @@ router.post('/submit-compliance/:id', upload.array('workImage', 20), async (req,
 })
 
 //end-point for getting approval form details...
-router.get('/approval-form/:id', async (req, res) => {
+router.get('/approval-form/:id',auth, async (req, res) => {
     try {
 
         const order = await Order.findById(req.params.id)
