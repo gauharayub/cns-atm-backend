@@ -157,12 +157,14 @@ router.post('/generateorder',auth, async (req, res) => {
 //end-point for employee-form submission 
 router.post('/submit-form',auth, async (req, res) => {
     try {
-        const body = JSON.parse(req.body)
+        const body = req.body
+        console.log(body)
         const engineer = await Engineer.findOne({
             engineerID: body.engineerID
         })
 
-        console.log(engineer)
+        // console.log(engineer)
+
 
         const order = await Order.findById(body.orderId)
         order.remarks = body.additionalRemarks
