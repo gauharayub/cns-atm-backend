@@ -27,26 +27,34 @@ const saltRounds = 8;
 
 //end point for login 
 router.post('/login', async (req, res) => {
-    const user = await Engineer.findOne({
-        emailID: req.body.email
-    })
-    if (user.length !== 0) {
-        try {
-            const hash = user.password
-            console.log(hash)
-            const match = await bcrypt.compare(req.body.password, hash).catch((err) => console.log('caught it'));;
+    try {
+        if (req.body.email) {
+            const user = await Engineer.findOne({
+                emailID: req.body.email
+            })
+            if (user.length !== 0) {
+                try {
+                    const hash = user.password
+                    // console.log(hash)
+                    const match = await bcrypt.compare(req.body.password, hash).catch((err) => console.log('caught it'));;
 
-            if (match) {
-                //jwt tokens should be added here
-                res.status(200).send("logged in not really")
+                    if (match) {
+                        //jwt tokens should be added here
+                        res.status(200).send("logged in not really")
+                    }
+                } catch (e) {
+                    res.status(400).send()
+                }
+
             }
-        } catch (e) {
             res.status(400).send()
         }
-    }
-    res.status(401).send()
 
+    } catch (e) {
+        res.status(400).send()
+    }
 })
+
 
 //end point for form to be filled by suprintendent......
 router.get('/order/:id', async (req, res) => {
