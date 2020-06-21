@@ -25,6 +25,20 @@ const saltRounds = 8;
 // }
 // updatePass()
 
+//end point to check whether is logged in or not
+router.post('/verify', async (req, res) => {
+    try {
+        //respond with 200 if jwt of user found
+        //token find here --> req.headers.authorization
+        // console.log(req.headers.authorization)
+        // res.status(200).send()
+    } catch (e) {
+        res.status(404).send("not logged in")
+    }
+
+
+})
+
 //end point for login 
 router.post('/login', async (req, res) => {
     try {
@@ -40,7 +54,7 @@ router.post('/login', async (req, res) => {
 
                     if (match) {
                         //jwt tokens should be added here
-                        res.status(200).send("logged in not really")
+                        res.status(200).send({token:"encryptedTokenHere"})
                     }
                 } catch (e) {
                     res.status(400).send()
