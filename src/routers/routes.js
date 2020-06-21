@@ -29,6 +29,20 @@ const bcrypt = require('bcrypt')
 // updatePass()
 
 
+//end point to check whether is logged in or not
+router.post('/verify', async (req, res) => {
+    try {
+        //respond with 200 if jwt of user found
+        //token find here --> req.headers.authorization
+        // console.log(req.headers.authorization)
+        // res.status(200).send()
+    } catch (e) {
+        res.status(404).send("not logged in")
+    }
+
+
+})
+
 //end point for login which is common for engineer and employee 
 router.post('/login', async (req, res) => {
 
@@ -64,10 +78,12 @@ router.post('/login', async (req, res) => {
         catch (e) {
             res.status(400).send()
         }
-    }
-    res.status(401).send()
 
+    } catch (e) {
+        res.status(400).send()
+    }
 })
+
 
 //end point for form to be filled by suprintendent......
 router.get('/order/:id', async (req, res) => {
