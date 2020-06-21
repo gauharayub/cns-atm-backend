@@ -13,10 +13,10 @@ const auth = async (req,res,next) => {
         
         // return parameter object we used for signing jwt token
         const userDetails = jwt.verify(token,process.env.JWT_SECRET)
-        console.log(userDetails)
-        //'tokens.token' is way in mongodb to search element in array when index is not known...
-        const engineer = await Engineer.findOne({_id:userDetails._id, 'tokens.token':token}) 
-        const employee = await Employee.findOne({_id:userDetails._id, 'tokens.token':token})
+        
+        //'tokens' is way in mongodb to search element in array when index is not known...
+        const engineer = await Engineer.findOne({_id:userDetails._id, tokens:token}) 
+        const employee = await Employee.findOne({_id:userDetails._id, tokens:token})
         
         let user = engineer
 
@@ -24,9 +24,9 @@ const auth = async (req,res,next) => {
         if(employee){
             user = employee
         }
-        console.log(user)
+        console.log("user",user)
         // if user is not found then user is not authenticated , throw error 
-        if(!user){
+        if (!user) {
             throw new Error('User Not authenticated')
         }
 
