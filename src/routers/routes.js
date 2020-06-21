@@ -37,7 +37,6 @@ router.post('/verify', (req, res) => {
         //respond with 200 if jwt of user 
         const token = req.get('authorization')
         const ans = jwt.verify(token, process.env.JWT_SECRET)
-        console.log(ans)
         res.status(200).send()
     } catch (e) {
         res.status(403).send("not logged in")
