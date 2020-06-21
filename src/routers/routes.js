@@ -10,6 +10,7 @@ const sendMessage = require('../messaging/send_email')
 const sendSMS = require('../messaging/send_sms')
 const sharp = require('sharp')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 /* use the commented code below only for testing */
 
@@ -29,15 +30,16 @@ const bcrypt = require('bcrypt')
 // updatePass()
 
 
-//end point to check whether is logged in or not
-router.post('/verify', async (req, res) => {
+//end point to not allow logged in user to login page
+router.post('/verify', (req, res) => {
     try {
-        //respond with 200 if jwt of user found
-        //token find here --> req.headers.authorization
-        // console.log(req.headers.authorization)
-        // res.status(200).send()
+        //respond with 200 if jwt of user 
+        const token = req.get('authorization')
+        const ans = jwt.verify(token, process.env.JWT_SECRET)
+        console.log(ans)
+        res.status(200).send()
     } catch (e) {
-        res.status(404).send("not logged in")
+        res.status(403).send("not logged in")
     }
 
 
@@ -50,37 +52,33 @@ router.post('/login', async (req, res) => {
     const engineer = await Engineer.findOne({
         emailID: req.body.email
     })
-    console.log(engineer)
 
     //find user in employee..
     const employee = await Employee.findOne({
-        emailID:req.body.email
+        emailID: req.body.email
     })
 
     if (employee || engineer) {
         try {
 
             let user = employee
-
             //if user is not employee then update user to engineer..
-            if(engineer){
+            if (engineer) {
                 user = engineer
             }
             //validate password of user....
             if (user.validatePassword(req.body.password)) {
-            
                 //if user is validated then generate jwt token which will be stored in user's browser....
                 const token = user.generateJWT()
-                res.status(200).send({user,token})
+                res.status(200).send({
+                    token
+                })
 
             }
-        } 
-        catch (e) {
+        } catch (e) {
             res.status(400).send()
         }
 
-    } catch (e) {
-        res.status(400).send()
     }
 })
 
@@ -109,8 +107,7 @@ router.get('/order/:id', async (req, res) => {
             cycle: order.cycle
         }
         res.status(200).send(data)
-    } 
-    catch (e) {
+    } catch (e) {
         res.status(404).send()
     }
 })
@@ -184,8 +181,7 @@ router.post('/submit-form', async (req, res) => {
         sendMessage(emailID, 'hello', 'text-here')
         sendSMS(phoneNumber, 'text-here')
         res.status(200).send()
-    } 
-    catch (e) {
+    } catch (e) {
         res.status(400).send({
             error: "Error parsing the body-data"
         })
@@ -233,8 +229,7 @@ router.post('/submit-compliance/:id', upload.array('workImage', 20), async (req,
         order.workImage = files
         await order.save()
         res.status(201).send('files uploaded')
-    }
-    catch (e) {
+    } catch (e) {
         res.status(415).send({
             error: 'Error uploading the file. Upload only in jpg, jpeg or png format'
         })
@@ -273,8 +268,7 @@ router.get('/approval-form/:id', async (req, res) => {
         }
 
         res.status(200).send(data)
-    } 
-    catch (e) {
+    } catch (e) {
 
         res.status(404).send({
             error: "Could not find the requested resource!"
