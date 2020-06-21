@@ -29,6 +29,7 @@ const engineerSchema  = new mongoose.Schema({
         type:String,
         required:true
     },
+    tokens:[{type:String,required:true}],
     orders:[{type:mongoose.Schema.Types.ObjectId, ref:'Order'}]
 })
 
@@ -44,19 +45,23 @@ engineerSchema.methods.validatePassword = async function(password){
 
 
 //method to generate JWT if the user has been verified, this jwt will be stored in local storage....
-engineerSchema.methods.generateJWT = function(){
+engineerSchema.methods.generateJWT = async function(){
     
     const user = this
     const token = jwt.sign({_id:user._id.toString()},process.env.JWT_SECRET)
+    await user.tokens.push(token)
+    await user.save()
     return token
 
 }
 
 engineerSchema.methods.toJSON  = function(){
+
     const user = this
     const userObject = user.toObject()
     delete userObject.password
     return userObject
+    
 }
 
 const Engineer = mongoose.model('Engineer',engineerSchema)
