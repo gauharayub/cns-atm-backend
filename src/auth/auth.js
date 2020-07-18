@@ -9,7 +9,6 @@ const auth = async (req,res,next) => {
 
         // token string have authorization type (bearer) concatenated...remove it using replace function.
         const token = req.header('Authorization').replace('Bearer ','')
-        console.log(token)
 
         // return parameter object we used for signing jwt token
         const userDetails = jwt.verify(token,process.env.JWT_SECRET)
@@ -17,8 +16,7 @@ const auth = async (req,res,next) => {
         // tokens:token is way in mongodb to search element in array when index is not known...
         const engineer = await Engineer.findOne({_id:userDetails._id, tokens:token}) 
         const employee = await Employee.findOne({_id:userDetails._id, tokens:token})
-        console.log(engineer)
-        console.log(employee)
+        
         let user = engineer
 
         //check if user is employee

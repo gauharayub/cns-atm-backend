@@ -255,7 +255,6 @@ router.get('/approval-form/:id',auth, async (req, res) => {
             })
         })
 
-        console.log(tasklist)
         const data = {
             tasklist,
             remarks: order.remarks,
