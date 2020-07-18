@@ -8,6 +8,7 @@ const auth = async (req,res,next) => {
     try{
 
         // token string have authorization type (bearer) concatenated...remove it using replace function.
+
         const token = req.get('authorization')
         
         
@@ -18,6 +19,7 @@ const auth = async (req,res,next) => {
         const engineer = await Engineer.findOne({_id:userDetails._id, tokens:token}) 
         const employee = await Employee.findOne({_id:userDetails._id, tokens:token})
         
+
         let user = engineer
 
         //check if user is employee
