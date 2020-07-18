@@ -5,4 +5,4 @@ mongoose.connect(process.env.DATABASE_CONNECTION_STRING, {
     useCreateIndex:true,
     useUnifiedTopology:true,
     useFindAndModify:false
-}
+})

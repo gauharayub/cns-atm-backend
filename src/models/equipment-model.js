@@ -22,7 +22,9 @@ const equipmentSchema = new mongoose.Schema({
         type:Date,
         required:true
      },
-      img: { data: Buffer, contentType: String },
+     image: {
+        type: Buffer
+     },
 
      //maintenance plan for equipment...
      maintenancePlanList:[{type:mongoose.Schema.Types.ObjectId, ref:'MaintenancePlan'}],
