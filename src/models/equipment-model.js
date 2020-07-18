@@ -14,6 +14,15 @@ const equipmentSchema = new mongoose.Schema({
          type:String,
          required:true
      },
+     manufacturer:{
+         type: String,
+         required: true
+     },
+     procurement_data:{
+        type:Date,
+        required:true
+     },
+      img: { data: Buffer, contentType: String },
 
      //maintenance plan for equipment...
      maintenancePlanList:[{type:mongoose.Schema.Types.ObjectId, ref:'MaintenancePlan'}],
