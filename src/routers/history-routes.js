@@ -5,11 +5,12 @@ const Engineer = require('../models/engineer')
 const Equipment = require('../models/equipment-model')
 const Order = require('../models/orders')
 const Location = require('../models/location')
+const auth = require('../auth/auth')
 
 
 //end-point for retrieving list of all orders.....
 //inserted cors with origin as * before callback function
-router.get('/get-orders',async(req,res)=>{
+router.get('/get-orders',auth, async(req,res)=>{
     try{
         const list = await Order.find()
         res.status(200).send(list)
