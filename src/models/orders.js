@@ -28,13 +28,17 @@ const orderSchema = new mongoose.Schema({
         type:String,
     },
     task:{
-        type:mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         required:true,
-        ref:'Tasklist'
+        ref: 'Tasklist'
     },
     engineer:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Engineer'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Engineer'
+    },
+    employee: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Employee'
     },
     location:{
         type:String,
@@ -45,17 +49,18 @@ const orderSchema = new mongoose.Schema({
         required:true,
         default:"No"
     },
-    status:{
+    engineerStatus:{
         type:String,
         required:true,
         default:"Unassigned"
     },
+    employeeStatus: {
+        type: String,
+        required: true,
+        default:"Unassigned"
+    },
     dateOfCompletion:{
         type:Date
-    },
-    equipmentCode:{
-        type:String,
-        required:true,
     },
     cycle:{
         type:String,
