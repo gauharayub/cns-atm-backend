@@ -126,7 +126,6 @@ router.get('/compliance/:id',auth, async (req, res) => {
             equipmentCode: order.task.maintenancePlan.equipment.equipmentCode,
             equipmentName: order.task.maintenancePlan.equipment.description,
             description: order.work,
-            status: order.status,
             location: order.location,
             _id: order._id,
             cycle: order.cycle
@@ -169,6 +168,7 @@ router.post('/submit-form',auth, async (req, res) => {
         order.employeeStatus = "todo"
 
         await order.save()
+        
         engineer.orders.push(order._id)
         await engineer.save()
 
@@ -246,6 +246,8 @@ router.get('/approval-form/:id',auth, async (req, res) => {
         await order.populate('engineer').execPopulate()
         
         const tasks = order.task.tasks
+
+        //tasks to be perfomed by engineer
         let tasklist = []
         tasks.forEach((task, i) => {
             tasklist.push({
