@@ -31,10 +31,10 @@ const auth = require('../auth/auth')
 // updatePass()
 
 
-//end point to not allow logged in user to login page
+// end point to not allow logged in user to login page
 router.post('/verify', (req, res) => {
     try {
-        //respond with 200 if jwt of user 
+        // respond with 200 if jwt of user 
         const token = req.get('authorization')
         const ans = jwt.verify(token, process.env.JWT_SECRET)
         res.status(200).send()
@@ -43,16 +43,15 @@ router.post('/verify', (req, res) => {
     }
 })
 
-//end point for login which is common for engineer and employee 
+// end point for login which is common for engineer and employee 
 router.post('/login', async (req, res) => {
 
-    //find user in engineer..
+    // find user in engineer..
     const engineer = await Engineer.findOne({
         emailID: req.body.email
     })
     
-
-    //find user in employee..
+    // find user in employee..
     const employee = await Employee.findOne({
         emailID: req.body.email
     })
@@ -61,16 +60,15 @@ router.post('/login', async (req, res) => {
         try {
 
             let user = employee
-            //if user is not employee then update user to engineer..
+            // if user is not employee then update user to engineer..
             if (engineer) {
                 user = engineer
             }
-            //validate password of user....
+            // validate password of user....
             if (user.validatePassword(req.body.password)) {
-                //if user is validated then generate jwt token which will be stored in user's browser....
+                // if user is validated then generate jwt token which will be stored in user's browser....
                 const token = await user.generateJWT()
                 res.status(200).send({user,token})
-
             }
         } catch (e) {
             res.status(400).send()
@@ -128,7 +126,6 @@ router.get('/compliance/:id',auth, async (req, res) => {
             equipmentCode: order.task.maintenancePlan.equipment.equipmentCode,
             equipmentName: order.task.maintenancePlan.equipment.description,
             description: order.work,
-            status: order.status,
             location: order.location,
             _id: order._id,
             cycle: order.cycle
@@ -155,7 +152,7 @@ router.post('/generateorder',auth, async (req, res) => {
     }
 })
 
-//end-point for employee-form submission 
+//end-point for employee-form submission after assigning an engineer to an order... 
 router.post('/submit-form',auth, async (req, res) => {
     try {
         const body = req.body
@@ -164,21 +161,20 @@ router.post('/submit-form',auth, async (req, res) => {
             engineerID: body.engineerID
         })
 
-        // console.log(engineer)
-
-
         const order = await Order.findById(body.orderId)
         order.remarks = body.additionalRemarks
         order.engineer = engineer._id
-        order.status = "assigned"
+        order.engineerStatus = "todo"
+        order.employeeStatus = "todo"
 
         await order.save()
+        
         engineer.orders.push(order._id)
         await engineer.save()
 
         const emailID = engineer.emailID
         const phoneNumber = engineer.phoneNumber
-        sendMessage(emailID, 'hello', 'text-here')
+        sendMessage(emailID, 'Order Assignment', `An Order with orderID ${order._id} have been assigned to you`)
         sendSMS(phoneNumber, 'text-here')
         res.status(200).send()
     } catch (e) {
@@ -208,12 +204,11 @@ const upload = multer({
 })
 
 
-//end-point for compliance form submission....
+// end-point for compliance form submission....
 router.post('/submit-compliance/:id',auth, upload.array('workImage', 20), async (req, res) => {
     try {
 
-        //uploaded file will be saved in file attribute of request object.....
-
+        // uploaded file will be saved in file attribute of request object.....
         // const file =  await sharp(req.file.buffer).resize({ width:500, height: 300}).png().toBuffer()
         const order = await Order.findById(req.params.id)
         const tasklist = JSON.parse(req.body.taskListValue)
@@ -226,9 +221,14 @@ router.post('/submit-compliance/:id',auth, upload.array('workImage', 20), async 
         const files = req.files.map((file) => {
             return file.buffer
         })
+        
         order.workImage = files
+        order.engineerStatus = "review"
+        order.employeeStatus = "review"
+
         await order.save()
         res.status(201).send('files uploaded')
+
     } catch (e) {
         res.status(415).send({
             error: 'Error uploading the file. Upload only in jpg, jpeg or png format'
@@ -236,14 +236,18 @@ router.post('/submit-compliance/:id',auth, upload.array('workImage', 20), async 
     }
 })
 
-//end-point for getting approval form details...
+
+// end-point for getting approval form details...
 router.get('/approval-form/:id',auth, async (req, res) => {
     try {
 
         const order = await Order.findById(req.params.id)
         await order.populate('task').execPopulate()
         await order.populate('engineer').execPopulate()
+        
         const tasks = order.task.tasks
+
+        //tasks to be perfomed by engineer
         let tasklist = []
         tasks.forEach((task, i) => {
             tasklist.push({
@@ -251,8 +255,13 @@ router.get('/approval-form/:id',auth, async (req, res) => {
                 status: order.tasklist[i]
             })
         })
+        
+        // only for testing purpose so that app doesn't crash...
+        let engineer = "test"
 
-        console.log(tasklist)
+        // actual code to be replaced with test code...
+        // const engineer = order.engineer.name
+
         const data = {
             tasklist,
             remarks: order.remarks,
@@ -264,10 +273,11 @@ router.get('/approval-form/:id',auth, async (req, res) => {
             cycle: order.cycle,
             assignmentCode: order.assignmentCode,
             assignmentNumber: order.assignmentNumber,
-            enginner: order.engineer.name
+            engineer
         }
 
         res.status(200).send(data)
+
     } catch (e) {
 
         res.status(404).send({
@@ -276,5 +286,149 @@ router.get('/approval-form/:id',auth, async (req, res) => {
     }
 })
 
+
+router.get('/engineerOrders', auth, async(req, res) => {
+    
+    try {
+        const engineer = req.user
+
+        // array of orders assigned to engineer..
+        const ordersAssignedToEngineer = engineer.orders
+
+        const todoOrders = {
+            heading: 'Todo',
+            orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "todo")
+        }
+
+        const progressOrders = {
+            heading: 'Progress',
+            orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "progress")
+        }
+
+        const reviewOrders = {
+            heading: 'Review',
+            orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "review")
+        } 
+
+        const completedOrders = {
+            heading: 'Completed',
+            orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "completed")
+        }
+        const orders = []
+        orders.push(todoOrders)
+        orders.push(progressOrders)
+        orders.push(reviewOrders)
+        orders.push(completedOrders)
+        
+        res.send({ orders })
+    }
+    catch (e) {
+        res.status(404).send({ error:  e.message })
+    }
+    
+})
+
+router.get('/employeeOrders', auth, async (req, res) => {
+    try {
+        const employee = req.user
+
+        // orders assigned by employee..
+        const ordersAssignedByEmployee = employee.orders
+
+        const todoOrders = {
+            heading: 'Todo',
+            orders: ordersAssignedByEmployee.filter((order) => order.employeeStatus === "todo")
+        }
+
+        const progressOrders = {
+            heading: 'Progress',
+            orders: ordersAssignedByEmployee.filter((order) => order.employeeStatus === "progress")
+        }
+
+        const assignedOrders = {
+            heading: 'Assigned',
+            orders: ordersAssignedByEmployee.filter((order) => order.employeeStatus === "assigned")
+        }
+
+        const reviewOrders = {
+            heading: 'Review',
+            orders: ordersAssignedByEmployee.filter((order) => order.employeeStatus === "review")
+        } 
+
+        const completedOrders = {
+            heading: 'Completed',
+            orders: ordersAssignedByEmployee.filter((order) => order.employeeStatus === "completed")
+        }
+        const orders = []
+        orders.push(todoOrders)
+        orders.push(progressOrders)
+        orders.push(assignedOrders)
+        orders.push(reviewOrders)
+        orders.push(completedOrders)
+        
+        res.send({ orders })
+
+    }
+    catch (e) {
+        res.status(404).send({error :  e.message })
+    }
+    
+})
+
+router.post('/submit-approval/:id', auth, async (req, res) => {
+    
+    try {
+        const orderId = req.params.id
+        const order = await Order.findById(orderId)
+
+        if (req.body.undoneTasks.length) {
+
+            //order details of newly generated order out of undone tasks..
+            orderdetails = {
+                equipmentCode: order.equipmentCode,
+                assignmentCode: order.aassignmentCode,
+                equipment: order.equipment,
+                number: order.number + 'B',
+                work: order.work,
+                location: order.location,
+                cycle: order.cycle,
+                tasklist: req.body.undoneTasks
+            }
+
+            // generate new order for remaining tasks
+            const newOrder = new Order(orderdetails)
+            await newOrder.save()
+        }
+
+        // change status of this order for employee as well as engineer..
+        order.engineerStatus = "completed"
+        order.employeeStatus = "completed"
+
+        await order.save()
+        res.status(200).send()
+    }
+    catch (e) {
+        res.status(400).send({error: e.message})
+    }
+    
+})
+
+// move the order to progress-card...
+router.patch('/toprogress/:id', auth, async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id)
+
+        // change status of order for engineer and employee...
+        order.employeeStatus = "progress"
+        order.engineerStatus = "progress"
+
+        await order.save()
+        res.status(200).send()
+    }
+    catch (e) {
+        res.status(400).send({error: e.message})
+    }
+    
+})
 
 module.exports = router
