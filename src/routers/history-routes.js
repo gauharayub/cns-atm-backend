@@ -10,8 +10,7 @@ const auth = require('../auth/auth')
 
 //end-point for retrieving list of all orders.....
 //inserted cors with origin as * before callback function
-
-router.get('/get-orders',auth, async(req,res)=>{
+router.get('/get-orders', auth, async(req,res)=>{
 
     try{
         const list = await Order.find()
@@ -23,7 +22,7 @@ router.get('/get-orders',auth, async(req,res)=>{
 })
 
 //end-point for getting list of engineers to be used in dropdown list of engineers.....
-router.get('/engineers',async (req,res)=>{
+router.get('/engineers', auth, async (req,res)=>{
     try{
         const list = await Engineer.find()
         res.status(200).send(list)
@@ -35,7 +34,7 @@ router.get('/engineers',async (req,res)=>{
 
 
 //end-point for getting list of all equipments.....
-router.get('/equipment-list',async(req,res)=>{
+router.get('/equipment-list',auth, async(req,res)=>{
     try{
         const list = await Equipment.find()
         res.status(200).send(list)
@@ -47,7 +46,7 @@ router.get('/equipment-list',async(req,res)=>{
 })
 
 //end-point for getting list of all employees....
-router.get('/employees',async(req,res)=>{
+router.get('/employees',auth, async(req,res)=>{
     try{
         const list = await Employee.find()
         res.status(200).send(list)
@@ -58,7 +57,7 @@ router.get('/employees',async(req,res)=>{
 })
 
 //end-point for getting list of all completed or pending orders...
-router.get('/orders/:completed',async (req,res)=>{
+router.get('/orders/:completed', auth, async (req,res)=>{
     try{
         const orders = await Order.find({
             completed:req.params.completed
@@ -70,7 +69,7 @@ router.get('/orders/:completed',async (req,res)=>{
 })
 
 //end-point for getting orders according to their cycle
-router.get('/orders/:cycle',async (req,res)=>{
+router.get('/orders/:cycle',auth, async (req,res)=>{
     try{
         if(req.params.cycle=="daily"){
             const orders = await Order.find({
@@ -98,7 +97,7 @@ router.get('/orders/:cycle',async (req,res)=>{
 })
 
 //end-point for getting list of all locations in the plant
-router.get('/locations',async(req,res)=>{
+router.get('/locations',auth, async(req,res)=>{
     try{
         const locations = await Location.find()
         res.status(200).send(locations)
