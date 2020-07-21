@@ -1,7 +1,10 @@
 const express = require('express')
 require('./db/mongoose')
-const router = require('./routers/routes')
-const history = require('./routers/history-routes')
+const mainRoutes = require('./routers/main-routes')
+const historyRoutes = require('./routers/history-routes')
+const complianceRoutes = require('./routers/compliance-routes')
+const approvalRoutes = require('./routers/approval-routes')
+const orderAssignmentRoutes = require('./routers/order-assignment-routes')
 const orderGeneration = require('./utils/orderGeneration')
 const path = require('path')
 const cors = require('cors')
@@ -22,9 +25,11 @@ app.use(express.text())
 app.use(express.static(path.join(__dirname,'../public')))
 
 //register routers on express app....
-app.use(router)
-app.use(history)
-
+app.use(mainRoutes)
+app.use(historyRoutes)
+app.use(complianceRoutes)
+app.use(approvalRoutes)
+app.use(orderAssignmentRoutes)
 
 //function to start cycle-based order generation...
 // orderGeneration()
