@@ -5,9 +5,8 @@ const Employee = require('../models/employee')
 /* auth middleware for verifying user */
 const auth = async (req,res,next) => {
     try{
-
         // token string have authorization type (bearer) concatenated...remove it using replace function.
-        let token = req.get('Authorization').replace('Bearer ','')
+        let token = req.get('Authorization')
         
         // return parameter object we used for signing jwt token
         const userDetails = jwt.verify(token,process.env.JWT_SECRET)
@@ -22,7 +21,7 @@ const auth = async (req,res,next) => {
         if(employee){
             user = employee
         }
-        // console.log("user",user)
+        console.log("user",user)
         // if user is not found then user is not authenticated , throw error 
         if (!user) {
             throw new Error('User Not authenticated')
