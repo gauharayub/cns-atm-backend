@@ -49,7 +49,7 @@ router.post('/submit-form',auth, async (req, res) => {
         order.remarks = body.additionalRemarks
         order.engineer = engineer._id
         order.engineerStatus = "todo"
-        order.employeeStatus = "todo"
+        order.employeeStatus = "assigned"
 
         await order.save()
         
