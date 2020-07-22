@@ -1,9 +1,6 @@
 const express = require('express')
 const router = new express.Router()
-const Equipment = require('../models/equipment-model')
 const Engineer = require('../models/engineer')
-const Employee = require('../models/employee')
-const Tasklist = require('../models/tasklist')
 const Order = require('../models/orders')
 const sendMessage = require('../messaging/send_email')
 const sendSMS = require('../messaging/send_sms')
@@ -39,6 +36,7 @@ router.get('/order/:id', auth ,async (req, res) => {
     }
 })
 
+
 //end-point for employee-form submission after assigning an engineer to an order... 
 router.post('/submit-form',auth, async (req, res) => {
     try {
@@ -70,5 +68,6 @@ router.post('/submit-form',auth, async (req, res) => {
         })
     }
 })
+
 
 module.exports = router

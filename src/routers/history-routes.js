@@ -21,6 +21,7 @@ router.get('/get-orders', auth, async(req,res)=>{
     }
 })
 
+
 //end-point for getting list of engineers to be used in dropdown list of engineers.....
 router.get('/engineers', auth, async (req,res)=>{
     try{
@@ -45,6 +46,7 @@ router.get('/equipment-list',auth, async(req,res)=>{
     
 })
 
+
 //end-point for getting list of all employees....
 router.get('/employees',auth, async(req,res)=>{
     try{
@@ -55,6 +57,7 @@ router.get('/employees',auth, async(req,res)=>{
         res.status(404).send({error:"Could not fetch the list"})
     }
 })
+
 
 //end-point for getting list of all completed or pending orders...
 router.get('/orders/:completed', auth, async (req,res)=>{
@@ -67,6 +70,7 @@ router.get('/orders/:completed', auth, async (req,res)=>{
         res.status(404).send({error:"List not found"})
     }
 })
+
 
 //end-point for getting orders according to their cycle
 router.get('/orders/:cycle',auth, async (req,res)=>{
@@ -96,6 +100,7 @@ router.get('/orders/:cycle',auth, async (req,res)=>{
     }
 })
 
+
 //end-point for getting list of all locations in the plant
 router.get('/locations',auth, async(req,res)=>{
     try{
@@ -106,5 +111,6 @@ router.get('/locations',auth, async(req,res)=>{
         res.status(500).send({error:"Could not fetch locations"})
     }
 })
+
 
 module.exports = router

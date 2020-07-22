@@ -1,11 +1,6 @@
 const express = require('express')
 const router = new express.Router()
-const Equipment = require('../models/equipment-model')
-const Engineer = require('../models/engineer')
-const Employee = require('../models/employee')
-const Tasklist = require('../models/tasklist')
 const Order = require('../models/orders')
-const multer = require('multer')
 const auth = require('../auth/auth')
 
 
@@ -57,6 +52,7 @@ router.get('/approval-form/:id',auth, async (req, res) => {
         })
     }
 })
+
 
 // submit approval-form end-point..
 router.post('/submit-approval/:id', auth, async (req, res) => {

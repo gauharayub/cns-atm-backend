@@ -1,12 +1,8 @@
 const express = require('express')
 const router = new express.Router()
-const Equipment = require('../models/equipment-model')
 const Engineer = require('../models/engineer')
 const Employee = require('../models/employee')
-const Tasklist = require('../models/tasklist')
 const Order = require('../models/orders')
-const sendMessage = require('../messaging/send_email')
-const sendSMS = require('../messaging/send_sms')
 const jwt = require('jsonwebtoken')
 const auth = require('../auth/auth')
 
@@ -22,6 +18,7 @@ router.post('/verify', async (req, res) => {
         res.status(403).send("not logged in")
     }
 })
+
 
 // end point for login which is common for engineer and employee 
 router.post('/login', async (req, res) => {
@@ -59,6 +56,7 @@ router.post('/login', async (req, res) => {
 })
 
 
+// end-point to fetch orders of engineer...
 router.get('/engineerOrders', auth, async(req, res) => {
     
     try {
@@ -103,6 +101,8 @@ router.get('/engineerOrders', auth, async(req, res) => {
     
 })
 
+
+// end-point to fetch orders of employee...
 router.get('/employeeOrders', auth, async (req, res) => {
     try {
         const employee = req.user
@@ -170,6 +170,7 @@ router.patch('/toprogress/:id', auth, async (req, res) => {
     }
     
 })
+
 
 // multiple query filters for fetching orders...
 // /getorders?completed=true&locationId=111&date=&equipmentId=kk
