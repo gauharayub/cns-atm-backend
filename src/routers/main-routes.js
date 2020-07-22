@@ -64,7 +64,10 @@ router.get('/engineerOrders', auth, async(req, res) => {
     try {
         const engineer = req.user
 
-        // array of orders assigned to engineer..
+       
+        await engineer.populate('orders').execPopulate()
+        
+         // array of orders assigned to engineer..
         const ordersAssignedToEngineer = engineer.orders
 
         const todoOrders = {
@@ -103,6 +106,8 @@ router.get('/engineerOrders', auth, async(req, res) => {
 router.get('/employeeOrders', auth, async (req, res) => {
     try {
         const employee = req.user
+
+        await employee.populate('orders').execPopulate()
 
         // orders assigned by employee..
         const ordersAssignedByEmployee = employee.orders
