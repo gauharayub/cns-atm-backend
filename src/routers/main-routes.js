@@ -175,9 +175,9 @@ router.patch('/toprogress/:id', auth, async (req, res) => {
 
 
 // multiple query filters for fetching orders...
-router.get('/searchorders', auth, async (req,res) => {
+router.post('/searchorders', auth, async (req,res) => {
     try {
-
+        
         // object for filter options...
         const filterOptions = {}
         
