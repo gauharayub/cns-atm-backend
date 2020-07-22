@@ -95,7 +95,7 @@ router.get('/engineerOrders', auth, async(req, res) => {
         orders.push(reviewOrders)
         orders.push(completedOrders)
         
-        res.send({ orders })
+        res.send(orders )
     }
     catch (e) {
         res.status(404).send({ error:  "Could not query orders" })
@@ -143,7 +143,7 @@ router.get('/employeeOrders', auth, async (req, res) => {
         orders.push(reviewOrders)
         orders.push(completedOrders)
         
-        res.send({ orders })
+        res.send(orders )
 
     }
     catch (e) {

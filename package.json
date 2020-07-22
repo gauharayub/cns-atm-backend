@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start":"npm run dev",
     "dev": "env-cmd -f ./config/dev.env nodemon src/app.js",
     "test": "env-cmd -f ./config/dev.env node src/messaging/send_email.js"
   },
@@ -13,6 +14,7 @@
     "@sendgrid/mail": "^6.5.3",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "datejs": "^1.0.0-rc3",
     "express": "^4.17.1",
