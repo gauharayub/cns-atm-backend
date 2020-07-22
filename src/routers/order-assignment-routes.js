@@ -2,6 +2,9 @@ const express = require('express')
 const router = new express.Router()
 const Engineer = require('../models/engineer')
 const Order = require('../models/orders')
+const TaskList = require('../models/tasklist')
+const Equipment = require('../models/equipment-model')
+const MaintenancePlan = require('../models/maintenance-plan')
 const sendMessage = require('../messaging/send_email')
 const sendSMS = require('../messaging/send_sms')
 const auth = require('../auth/auth')
@@ -49,7 +52,7 @@ router.post('/submit-form',auth, async (req, res) => {
         order.remarks = body.additionalRemarks
         order.engineer = engineer._id
         order.engineerStatus = "todo"
-        order.employeeStatus = "todo"
+        order.employeeStatus = "assigned"
 
         await order.save()
         

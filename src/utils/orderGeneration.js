@@ -9,11 +9,9 @@ const timespan = require('timespan')
 var num = 1111
 
 //function to generate orders every cycle of task.
-
 const orderGeneration = async()=>{
 
-//runs every second
-
+    //runs every second
     cron.schedule('*/1 * * * * *',async ()=>{
         const locations = await Location.find()
         const equipment = await Equipment.find()
@@ -26,17 +24,14 @@ const orderGeneration = async()=>{
                 let current = Date.now()
                 let updated = Date.parse(maintenanceList[j].updatedAt)
 
-//calculate time-diifference between current time and last update time....
-
+                //calculate time-diifference between current time and last update time....
                 let tspan = new timespan.TimeSpan(current-updated)
 
-//parse months from cycle string.....
-
+                //parse months from cycle string.....
                 let cycle = maintenanceList[j].cycle
                 let days = 1
 
-//check if the cycle is daily, weekly or monthly......
-
+                // check if the cycle is daily, weekly or monthly......
                 if(cycle=="daily"){
                     days = 1
                 }
@@ -48,12 +43,10 @@ const orderGeneration = async()=>{
                     days  = month*30
                 }
 
-//check if cycle is reached or not.....         
-
+                //check if cycle is reached or not.....         
                 if(tspan.totalDays()>=days){
 
-//create new order if cycle has completed for task....  
-
+                    //create new order if cycle has completed for task....  
                     const order = new Order({
                         number:num,
                         assignmentCode:'T-400',

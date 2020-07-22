@@ -1,6 +1,9 @@
 const express = require('express')
 const router = new express.Router()
 const Order = require('../models/orders')
+const TaskList = require('../models/tasklist')
+const Equipment = require('../models/equipment-model')
+const MaintenancePlan = require('../models/maintenance-plan')
 const multer = require('multer')
 const auth = require('../auth/auth')
 
