@@ -34,7 +34,6 @@ router.get('/approval-form/:id',auth, async (req, res) => {
             remarks: order.remarks,
             description: order.work,
             images: order.workImage,
-            status: order.status,
             location: order.location,
             equipmentCode: order.equipmentCode,
             cycle: order.cycle,
