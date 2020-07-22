@@ -70,9 +70,9 @@ router.get('/engineerOrders', auth, async(req, res) => {
          // array of orders assigned to engineer..
         const ordersAssignedToEngineer = engineer.orders
 
-        const todoOrders = {
-            heading: 'Todo',
-            orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "todo")
+        const assignedOrders = {
+            heading: 'Assigned',
+            orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "assigned")
         }
 
         const progressOrders = {
@@ -90,7 +90,7 @@ router.get('/engineerOrders', auth, async(req, res) => {
             orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "completed")
         }
         const orders = []
-        orders.push(todoOrders)
+        orders.push(assignedOrders)
         orders.push(progressOrders)
         orders.push(reviewOrders)
         orders.push(completedOrders)
