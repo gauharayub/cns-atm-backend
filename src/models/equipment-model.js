@@ -1,36 +1,46 @@
 const mongoose = require('mongoose')
 const equipmentSchema = new mongoose.Schema({
-     equipmentCode:{
+    equipmentCode:{
          type:String,
          required:true,
          unique:true
-     },
-     equipmentNumber:{
+    },
+    
+    equipmentNumber:{
         type:Number,
         required:true,
         unique:true
-     },
-     description:{
+    },
+     
+    description:{
          type:String,
          required:true
-     },
-     manufacturer:{
+    },
+     
+    manufacturer:{
          type: String,
          required: true
-     },
-     procurement_data:{
+    },
+
+    procurement_data:{
         type:Date,
         required:true
-     },
-     image: {
+    },
+    
+    image: {
         type: Buffer
-     },
+    },
 
-     //maintenance plan for equipment...
-     maintenancePlanList:[{type:mongoose.Schema.Types.ObjectId, ref:'MaintenancePlan'}],
+    name: {
+         type: String,
+         required:true
+    },
 
-     //locations where the equipment is installed.....
-     locations:[{type:mongoose.Schema.Types.ObjectId, ref:'Location'}]
+    //maintenance plan for equipment...
+    maintenancePlanList:[{type:mongoose.Schema.Types.ObjectId, ref:'MaintenancePlan'}],
+
+    //locations where the equipment is installed.....
+    locations:[{type:mongoose.Schema.Types.ObjectId, ref:'Location'}]
 })
 
 const Equipment = mongoose.model('Equipment',equipmentSchema)
