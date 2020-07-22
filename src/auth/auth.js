@@ -6,7 +6,7 @@ const Employee = require('../models/employee')
 const auth = async (req,res,next) => {
     try{
         // token string have authorization type (bearer) concatenated...remove it using replace function.
-        let token = req.get('Authorization')
+        let token = req.get('Authorization').replace('Bearer ','')
         
         // return parameter object we used for signing jwt token
         const userDetails = jwt.verify(token,process.env.JWT_SECRET)

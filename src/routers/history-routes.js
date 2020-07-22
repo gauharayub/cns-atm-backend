@@ -35,7 +35,7 @@ router.get('/engineers', auth, async (req,res)=>{
 
 
 //end-point for getting list of all equipments.....
-router.get('/equipment-list',auth, async(req,res)=>{
+router.get('/equipment-list', auth, async(req,res)=>{
     try{
         const list = await Equipment.find()
         res.status(200).send(list)

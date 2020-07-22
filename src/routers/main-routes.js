@@ -3,9 +3,11 @@ const router = new express.Router()
 const Engineer = require('../models/engineer')
 const Employee = require('../models/employee')
 const Order = require('../models/orders')
+const Location = require('../models/location')
 const jwt = require('jsonwebtoken')
 const auth = require('../auth/auth')
-
+const Equipment = require('../models/equipment-model')
+  
 
 // end point to not allow logged in user to login page
 router.post('/verify', async (req, res) => {
@@ -93,7 +95,7 @@ router.get('/engineerOrders', auth, async(req, res) => {
         orders.push(reviewOrders)
         orders.push(completedOrders)
         
-        res.send(orders )
+        res.send(orders)
     }
     catch (e) {
         res.status(404).send({ error:  "Could not query orders" })
@@ -143,7 +145,7 @@ router.get('/employeeOrders', auth, async (req, res) => {
         orders.push(reviewOrders)
         orders.push(completedOrders)
         
-        res.send(orders )
+        res.send(orders)
 
     }
     catch (e) {
@@ -173,7 +175,7 @@ router.patch('/toprogress/:id', auth, async (req, res) => {
 
 
 // multiple query filters for fetching orders...
-// /getorders?completed=true&locationId=111&date=&equipmentId=kk
+// /getorders?completed=true&locationId=111&date=&equipmentId=kk&equipmentName&locationName
 router.get('/searchorders', auth, async (req,res) => {
     try {
 
@@ -197,21 +199,32 @@ router.get('/searchorders', auth, async (req,res) => {
         }
 
         
-        // add location filter if location query is present..
+        // add locationId filter if location query is present..
         if (req.query.location != "All" && req.query.location) {
             filterOptions.location = req.query.location
         }
 
-        // add equipment filter if equipment query is present.. 
+        // add equipmentId filter if equipment query is present.. 
         if (req.query.equipment != "All" && req.query.equipment) {
             filterOptions.equipmentCode = req.query.equipment
         }
 
+        // add find by equipment name filter
+        if (req.query.equipmentName != "All" && req.query.equipmentName) {
+            const equipment  = await Equipment.findOne({ name: req.query.equipmentName })
+            filterOptions.equipment = equipment._id
+        }
+
+        // add find by location name filter
+        if (req.query.locationName != "All" && req.query.locationName) {
+            const location = await Location.findOne({ name: req.query.locationName })
+            filterOptions.location = location.description
+        }
         
         // find all orders after applying filter options..
         const orders = await Order.find(filterOptions)
 
-        res.status(200).send({ orders })
+        res.status(200).send(orders)
     }   
     catch (e) {
         res.status(404).send({error: "Could not query orders"})

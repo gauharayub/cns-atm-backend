@@ -19,7 +19,6 @@ router.get('/order/:id', auth ,async (req, res) => {
             }
         }).execPopulate()
 
-        console.log(order)
         const data = {
             tasklist: order.task.tasks,
             assignmentNumber: order.number,
