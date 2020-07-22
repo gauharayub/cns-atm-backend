@@ -175,7 +175,6 @@ router.patch('/toprogress/:id', auth, async (req, res) => {
 
 
 // multiple query filters for fetching orders...
-// /getorders?completed=true&locationId=111&date=&equipmentId=kk&equipmentName&locationName
 router.get('/searchorders', auth, async (req,res) => {
     try {
 
@@ -184,40 +183,40 @@ router.get('/searchorders', auth, async (req,res) => {
         
 
         // add createdAt date filter if date query is present
-        if (req.query.date != "All" && req.query.date) {
-            filterOptions.createdAt = req.query.date
+        if (req.body.date != "All" && req.body.date) {
+            filterOptions.createdAt = req.body.date
         }
 
         // add completed filter if completed query is present..
-        if (req.query.completed === "Completed") {
+        if (req.body.completed === "Completed") {
             const completed = "Yes"
             filterOptions.completed = completed
         }
-        else if (req.query.completed === "Pending") {
+        else if (req.body.completed === "Pending") {
             const completed = "No"
             filterOptions.completed = completed
         }
 
         
         // add locationId filter if location query is present..
-        if (req.query.location != "All" && req.query.location) {
-            filterOptions.location = req.query.location
+        if (req.body.location != "All" && req.body.location) {
+            filterOptions.location = req.body.location
         }
 
         // add equipmentId filter if equipment query is present.. 
-        if (req.query.equipment != "All" && req.query.equipment) {
-            filterOptions.equipmentCode = req.query.equipment
+        if (req.body.equipment != "All" && req.body.equipment) {
+            filterOptions.equipmentCode = req.body.equipment
         }
 
         // add find by equipment name filter
-        if (req.query.equipmentName != "All" && req.query.equipmentName) {
-            const equipment  = await Equipment.findOne({ name: req.query.equipmentName })
+        if (req.body.equipmentName != "All" && req.body.equipmentName) {
+            const equipment  = await Equipment.findOne({ name: req.body.equipmentName })
             filterOptions.equipment = equipment._id
         }
 
         // add find by location name filter
-        if (req.query.locationName != "All" && req.query.locationName) {
-            const location = await Location.findOne({ name: req.query.locationName })
+        if (req.body.locationName != "All" && req.body.locationName) {
+            const location = await Location.findOne({ name: req.body.locationName })
             filterOptions.location = location.description
         }
         
