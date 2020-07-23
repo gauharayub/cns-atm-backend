@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-mongoose.connect(process.env.DATABASE_CONNECTION_STRING, {
+mongoose.connect('mongodb+srv://gak:atlas12345@technocluster.clgff.mongodb.net/ATM-Database', {
     useNewUrlParser:true,
     useCreateIndex:true,
     useUnifiedTopology:true,

@@ -7,7 +7,6 @@ const Order = require('../models/orders')
 const Location = require('../models/location')
 const auth = require('../auth/auth')
 
-
 //end-point for retrieving list of all orders.....
 //inserted cors with origin as * before callback function
 router.get('/get-orders',auth, async(req,res)=>{
@@ -31,7 +30,6 @@ router.get('/engineers',async (req,res)=>{
     }
 })
 
-
 //end-point for getting list of all equipments.....
 router.get('/equipment-list',async(req,res)=>{
     try{
@@ -40,8 +38,7 @@ router.get('/equipment-list',async(req,res)=>{
     }
     catch(e){
         res.status(404).send()
-    }
-    
+    } 
 })
 
 //end-point for getting list of all employees....
