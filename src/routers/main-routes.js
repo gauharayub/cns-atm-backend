@@ -71,8 +71,8 @@ router.get('/engineerOrders', auth, async(req, res) => {
         const ordersAssignedToEngineer = engineer.orders
 
         const todoOrders = {
-            heading: 'Todo',
-            orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "todo")
+            heading: 'Assigned',
+            orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "assigned")
         }
 
         const progressOrders = {
@@ -140,8 +140,8 @@ router.get('/employeeOrders', auth, async (req, res) => {
         }
         const orders = []
         orders.push(todoOrders)
-        orders.push(progressOrders)
         orders.push(assignedOrders)
+        orders.push(progressOrders)
         orders.push(reviewOrders)
         orders.push(completedOrders)
         
