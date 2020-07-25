@@ -14,6 +14,7 @@ const auth = require('../auth/auth')
 router.get('/order/:id', auth ,async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)
+        console.log("got the order",order)
         await order.populate({
             path: 'task',
             populate: {
@@ -21,7 +22,7 @@ router.get('/order/:id', auth ,async (req, res) => {
                 populate: 'equipment'
             }
         }).execPopulate()
-
+	console.log("Populated the order")
         const data = {
             tasklist: order.task.tasks,
             assignmentNumber: order.number,
@@ -51,7 +52,7 @@ router.post('/submit-form',auth, async (req, res) => {
         const order = await Order.findById(body.orderId)
         order.remarks = body.additionalRemarks
         order.engineer = engineer._id
-        order.engineerStatus = "todo"
+        order.engineerStatus = "assigned"
         order.employeeStatus = "assigned"
 
         await order.save()
