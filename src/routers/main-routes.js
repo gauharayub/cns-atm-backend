@@ -94,7 +94,7 @@ router.get('/engineerOrders', auth, async(req, res) => {
         orders.push(progressOrders)
         orders.push(reviewOrders)
         orders.push(completedOrders)
-        
+        orders.push(engineer)
         res.send(orders)
     }
     catch (e) {
@@ -159,7 +159,8 @@ router.get('/employeeOrders', auth, async (req, res) => {
 router.patch('/toprogress/:id', auth, async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)
-
+	if(order){
+	console.log("order found")}
         // change status of order for engineer and employee...
         order.employeeStatus = "progress"
         order.engineerStatus = "progress"
