@@ -114,7 +114,8 @@ router.get('/employeeOrders', auth, async (req, res) => {
 
         const todoOrders = {
             heading: 'Todo',
-            orders: ordersAssignedByEmployee.filter((order) => order.employeeStatus === "todo")
+            orders: await Order.find({employeeStatus: 'unassigned', engineerStatus: 'unassigned'}, 
+                                      null, {limit: 10})
         }
 
         const progressOrders = {
