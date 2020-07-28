@@ -52,7 +52,7 @@ router.post('/submit-form',auth, async (req, res) => {
         const order = await Order.findById(body.orderId)
         order.remarks = body.additionalRemarks
         order.engineer = engineer._id
-        order.engineerStatus = "todo"
+        order.engineerStatus = "assigned"
         order.employeeStatus = "assigned"
 
         await order.save()

@@ -63,16 +63,15 @@ router.get('/engineerOrders', auth, async(req, res) => {
     
     try {
         const engineer = req.user
-
        
         await engineer.populate('orders').execPopulate()
         
          // array of orders assigned to engineer..
         const ordersAssignedToEngineer = engineer.orders
 
-        const todoOrders = {
-            heading: 'Todo',
-            orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "todo")
+        const assignedOrders = {
+            heading: 'Assigned',
+            orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "assigned")
         }
 
         const progressOrders = {
@@ -90,11 +89,10 @@ router.get('/engineerOrders', auth, async(req, res) => {
             orders: ordersAssignedToEngineer.filter((order) => order.engineerStatus === "completed")
         }
         const orders = []
-        orders.push(todoOrders)
+        orders.push(assignedOrders)
         orders.push(progressOrders)
         orders.push(reviewOrders)
         orders.push(completedOrders)
-        orders.push(engineer)
         res.send(orders)
     }
     catch (e) {
@@ -116,7 +114,8 @@ router.get('/employeeOrders', auth, async (req, res) => {
 
         const todoOrders = {
             heading: 'Todo',
-            orders: ordersAssignedByEmployee.filter((order) => order.employeeStatus === "todo")
+            orders: await Order.find({employeeStatus: 'unassigned', engineerStatus: 'unassigned'}, 
+                                      null, {limit: 10})
         }
 
         const progressOrders = {
@@ -140,13 +139,11 @@ router.get('/employeeOrders', auth, async (req, res) => {
         }
         const orders = []
         orders.push(todoOrders)
-        orders.push(progressOrders)
         orders.push(assignedOrders)
+        orders.push(progressOrders)
         orders.push(reviewOrders)
         orders.push(completedOrders)
-        
         res.send(orders)
-
     }
     catch (e) {
         res.status(404).send({error : "Could not found resources" })
@@ -176,9 +173,9 @@ router.patch('/toprogress/:id', auth, async (req, res) => {
 
 
 // multiple query filters for fetching orders...
-router.post('/searchorders', auth, async (req,res) => {
+router.post('/searchorders', auth , async (req,res) => {
     try {
-        
+
         // object for filter options...
         const filterOptions = {}
         
