@@ -67,24 +67,26 @@ router.post('/submit-approval/:id', auth, async (req, res) => {
             //order details of newly generated order out of undone tasks..
             orderdetails = {
                 equipmentCode: order.equipmentCode,
-                assignmentCode: order.aassignmentCode,
+                assignmentCode: order.assignmentCode,
                 equipment: order.equipment,
                 number: order.number + 'B',
                 work: order.work,
                 location: order.location,
                 cycle: order.cycle,
-                tasklist: req.body.undoneTasks
+                tasklist: req.body.undoneTasks,
+                task:order.task
             }
 
             // generate new order for remaining tasks
             const newOrder = new Order(orderdetails)
             await newOrder.save()
+            
         }
 
         // change status of this order for employee as well as engineer..
         order.engineerStatus = "completed"
         order.employeeStatus = "completed"
-
+        
         await order.save()
         res.status(200).send()
     }
