@@ -49,6 +49,10 @@ const orderSchema = new mongoose.Schema({
         required:true,
         default:"No"
     },
+    generationDate:{
+        type:Date,
+        required:true,
+    },
     engineerStatus:{
         type:String,
         required:true,
