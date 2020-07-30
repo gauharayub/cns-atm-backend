@@ -54,6 +54,7 @@ const orderGeneration = async()=>{
                         work:'Cleaning of metal-part',
                         task:maintenanceList[j].task,
                         location:locations[i].description,
+                        generationDate: Date.now(),
                         cycle:maintenanceList[j].cycle,
                         equipmentCode:locations[i].equipment.equipmentCode
                     })

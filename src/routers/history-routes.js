@@ -5,13 +5,12 @@ const Engineer = require('../models/engineer')
 const Equipment = require('../models/equipment-model')
 const Order = require('../models/orders')
 const Location = require('../models/location')
+const timespan = require('timespan')
 const auth = require('../auth/auth')
 
 
 //end-point for retrieving list of all orders.....
-//inserted cors with origin as * before callback function
 router.get('/get-orders', auth, async(req,res)=>{
-
     try{
         const list = await Order.find()
         res.status(200).send(list)
@@ -48,54 +47,81 @@ router.get('/equipment-list', auth, async(req,res)=>{
 
 
 //end-point for getting list of all employees....
-router.get('/employees',auth, async(req,res)=>{
-    try{
+router.get('/employees',auth, async(req,res) => {
+    try {
         const list = await Employee.find()
         res.status(200).send(list)
     }
-    catch(e){
+    catch(e) {
         res.status(404).send({error:"Could not fetch the list"})
     }
 })
 
 
-//end-point for getting list of all completed or pending orders...
-router.get('/orders/:completed', auth, async (req,res)=>{
-    try{
-        const orders = await Order.find({
-            completed:req.params.completed
-        })
-    }
-    catch(e){
-        res.status(404).send({error:"List not found"})
-    }
-})
-
-
-//end-point for getting orders according to their cycle
+//end-point for getting orders according to their renewal time left...
 router.get('/orders/:cycle',auth, async (req,res)=>{
-    try{
-        if(req.params.cycle=="daily"){
-            const orders = await Order.find({
-                cycle:"daily"
-            })
-            res.status(200).send(orders)
+
+    try {
+
+        // fetch all orders which are not yet assigned...
+        const orders = await Order.find({employeeStatus: 'unassigned', engineerStatus: 'unassigned'})
+
+        // number of days within which orders whose renewal dates are coming have to be queried.....
+        let daysBound = 1
+
+        if(req.params.cycle === "daily") {
+            daysBound = 1
         }
-        else if(req.params.cycle=="weekly"){
-            const orders = await Order.find({
-                cycle:"weekly"
-            })
-            res.status(200).send(orders)
+        else if(req.params.cycle === "weekly") {
+            daysBound = 7
+        }
+        else if(req.params.cycle === "monthly") {
+            daysBound = 30
+        }
+        else if(req.params.cycle === "six-monthly") {
+            daysBound = 6*30
+        }
+        else{
+            daysBound = 365
         }
 
-        else{
-            const orders = await Order.find({
-                cycle:req.params.cycle+" month"
-            })
-            res.status(200).send(orders)
-        }
+        // upcoming-orders in a particular time-cycle....
+        const upcomingOrders = orders.filter((order) => {
+
+            const orderGenerationDate = Date.parse(order.generationDate)
+            const presentDate  = Date.now()
+
+            const cycle = order.cycle
+
+            // cycleDays are number of days in which order will be renewed after generation.. 
+            let cycleDays = 1
+            
+            // check if the cycle is daily, weekly or monthly and calculate number of days......
+            if(cycle === "daily") {
+                cycleDays = 1
+            }
+            else if(cycle === "weekly") {
+                cycleDays = 7
+            }
+            else {
+                cycleDays = parseInt(cycle.replace(/[^0-9\.]/g, ''), 10) * 30
+            }
+
+            // calculate duration (in days) between order generation date and presentdate..
+            let totalDaysPassed = new timespan.TimeSpan(presentDate - orderGenerationDate)
+            totalDaysPassed = totalDaysPassed.totalDays()
+
+            // check if order have to completed within requested cycle ( weekly ,daily, monthly or yearly )
+            if( (cycleDays >= totalDaysPassed) && (cycleDays - totalDaysPassed <= daysBound) ) {
+                return true;
+            }
+
+            return false;
+        })
+
+        res.status(200).send(upcomingOrders)
     }
-    catch(e){
+    catch(e) {
         res.status(404).send()
     }
 })
