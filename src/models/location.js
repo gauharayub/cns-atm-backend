@@ -1,11 +1,11 @@
 const mongoose = require('mongoose')
 
 const locationSchema = new mongoose.Schema({
-    equipment:{
+    equipments:[{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Equipment'
-    },
+    }],
 
     locationId:{
         type: String,

@@ -34,7 +34,8 @@ router.get('/order/:id', auth ,async (req, res) => {
             cycle: order.cycle
         }
         res.status(200).send(data)
-    } catch (e) {
+    } 
+    catch (e) {
         res.status(404).send()
     }
 })
@@ -65,7 +66,8 @@ router.post('/submit-form',auth, async (req, res) => {
         sendMessage(emailID, 'Order Assignment', `An Order with orderID ${order._id} have been assigned to you`)
         sendSMS(phoneNumber, 'text-here')
         res.status(200).send()
-    } catch (e) {
+    } 
+    catch (e) {
         res.status(400).send({
             error: "Error parsing the body-data"
         })
