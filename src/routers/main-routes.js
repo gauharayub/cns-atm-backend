@@ -63,9 +63,9 @@ router.post('/logout', auth, async (req,res) => {
 
         //remove all tokens...
         user.tokens = []
-        
+
         await user.save()
-        res.status(200).send(user)
+        res.status(200).send()
     }
     catch(e){
         res.status(401).send('Failed to logout')
