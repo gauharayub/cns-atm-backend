@@ -15,7 +15,12 @@ router.post('/verify', async (req, res) => {
         // respond with 200 if jwt of user 
         const token = req.get('authorization')
         const ans = jwt.verify(token, process.env.JWT_SECRET)
-        res.status(200).send()
+        if(ans){
+            res.status(200).send()
+        }
+        else{
+            res.status(204).send()
+        }
     } catch (e) {
         res.status(403).send("not logged in")
     }
