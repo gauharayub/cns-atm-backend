@@ -54,7 +54,22 @@ router.post('/login', async (req, res) => {
         }
     } 
 
-    res.status(401).send()
+    res.status(401).send('Failed to login')
+})
+
+router.post('/logout', auth, async (req,res) => {
+    try{
+        const user = req.user
+
+        //remove all tokens...
+        user.tokens = []
+        
+        await user.save()
+        res.status(200).send(user)
+    }
+    catch(e){
+        res.status(401).send('Failed to logout')
+    }
 })
 
 
