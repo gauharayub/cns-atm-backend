@@ -10,12 +10,17 @@ const Equipment = require('../models/equipment-model')
   
 
 // end point to not allow logged in user to login page
-router.post('/verify', async (req, res) => {
+router.post('/verify',auth, async (req, res) => {
     try {
         // respond with 200 if jwt of user 
         const token = req.get('authorization')
         const ans = jwt.verify(token, process.env.JWT_SECRET)
-        res.status(200).send()
+        if(ans){
+            res.status(200).send()
+        }
+        else{
+            res.status(204).send()
+        }
     } catch (e) {
         res.status(403).send("not logged in")
     }
@@ -180,7 +185,8 @@ router.get('/employeeOrders', auth, async (req, res) => {
 router.patch('/toprogress/:id', auth, async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)
-
+	if(order){
+	console.log("order found")}
         // change status of order for engineer and employee...
         order.employeeStatus = "progress"
         order.engineerStatus = "progress"
