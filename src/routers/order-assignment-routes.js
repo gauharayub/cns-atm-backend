@@ -22,11 +22,10 @@ router.get('/order/:id', auth ,async (req, res) => {
                 populate: 'equipment'
             }
         }).execPopulate()
-	console.log("Populated the order")
+	    console.log(order)
         const data = {
             tasklist: order.task.tasks,
-            assignmentNumber: order.number,
-            equipmentCode: order.task.maintenancePlan.equipment.equipmentCode,
+            equipmentCode: order.equipmentCode,
             equipmentName: order.task.maintenancePlan.equipment.description,
             description: order.work,
             location: order.location,

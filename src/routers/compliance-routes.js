@@ -22,7 +22,6 @@ router.get('/compliance/:id',auth, async (req, res) => {
         console.log(order)
         const data = {
             tasklist: order.task.tasks,
-            assignmentNumber: order.number,
             equipmentCode: order.task.maintenancePlan.equipment.equipmentCode,
             equipmentName: order.task.maintenancePlan.equipment.description,
             description: order.work,

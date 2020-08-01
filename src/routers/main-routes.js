@@ -10,7 +10,7 @@ const Equipment = require('../models/equipment-model')
   
 
 // end point to not allow logged in user to login page
-router.post('/verify', async (req, res) => {
+router.post('/verify', auth, async (req, res) => {
     try {
         // respond with 200 if jwt of user 
         const token = req.get('authorization')
