@@ -10,11 +10,6 @@ const orderSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    assignmentCode:{
-        type:String,
-        required:true,
-        // unique:true
-    },
     equipment:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
@@ -56,12 +51,12 @@ const orderSchema = new mongoose.Schema({
     engineerStatus:{
         type:String,
         required:true,
-        default:"Unassigned"
+        default:"unassigned"
     },
     employeeStatus: {
         type: String,
         required: true,
-        default:"Unassigned"
+        default:"unassigned"
     },
     dateOfCompletion:{
         type:Date

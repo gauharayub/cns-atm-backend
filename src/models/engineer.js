@@ -36,33 +36,29 @@ const engineerSchema  = new mongoose.Schema({
 
 //method to validate engineer, don't use arrow functions as they prevent explicit binding of this..
 engineerSchema.methods.validatePassword = async function(password){
-
     const hash = this.password
     const match = await bcrypt.compare(password, hash).catch((err) => console.log('caught it'))
     return match
-    
 }
 
 
 //method to generate JWT if the user has been verified, this jwt will be stored in local storage....
 engineerSchema.methods.generateJWT = async function(){
-    
     const user = this
     const token = jwt.sign({_id:user._id.toString()},process.env.JWT_SECRET)
     await user.tokens.push(token)
     await user.save()
     return token
-
 }
 
-engineerSchema.methods.toJSON  = function(){
 
+engineerSchema.methods.toJSON  = function(){
     const user = this
     const userObject = user.toObject()
     delete userObject.password
     return userObject
-    
 }
+
 
 const Engineer = mongoose.model('Engineer',engineerSchema)
 

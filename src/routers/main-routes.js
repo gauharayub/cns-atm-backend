@@ -29,50 +29,59 @@ router.post('/verify', async (req, res) => {
 
 // end point for login which is common for engineer and employee 
 router.post('/login', async (req, res) => {
-
-    // find user in engineer..
-    const engineer = await Engineer.findOne({
-        emailID: req.body.email
-    })
+    try {
+        const engineer = await Engineer.findOne({
+            emailID: req.body.email
+        })
     
-    // find user in employee..
-    const employee = await Employee.findOne({
-        emailID: req.body.email
-    })
+        // find user in employee..
+        const employee = await Employee.findOne({
+            emailID: req.body.email
+        })
 
-    if (employee || engineer) {
-        try {
+        if (employee || engineer) {
+            try {
 
-            let user = employee
-            // if user is not employee then update user to engineer..
-            if (engineer) {
-                user = engineer
+                let user = employee
+                // if user is not employee then update user to engineer..
+                if (engineer) {
+                    user = engineer
+                }
+
+                const doesMatch = await user.validatePassword(req.body.password)
+
+                // validate password of user....
+                if (doesMatch === true) {
+                    // if user is validated then generate jwt token which will be stored in user's browser....
+                    const token = await user.generateJWT()
+                    res.status(200).send({user,token})
+                }
             }
-            // validate password of user....
-            if (user.validatePassword(req.body.password)) {
-                // if user is validated then generate jwt token which will be stored in user's browser....
-                const token = await user.generateJWT()
-                res.status(200).send({user,token})
+            catch (e) {
+                res.status(400).send()
             }
-        } catch (e) {
-            res.status(400).send()
         }
     } 
-
-    res.status(401).send('Failed to login')
+    catch(e){
+        res.status(401).send('Failed to login')
+    }    
 })
+
 
 router.post('/logout', auth, async (req,res) => {
     try{
         const user = req.user
 
-        //remove all tokens...
-        user.tokens = []
+        // remove current token from which user has been authenticated....
+        const tokens = user.tokens.filter((token)=>{
+            return token != req.token
+        })
+        user.tokens = tokens
 
         await user.save()
         res.status(200).send()
     }
-    catch(e){
+    catch(e) {
         res.status(401).send('Failed to logout')
     }
 })
@@ -198,7 +207,6 @@ router.post('/searchorders', auth , async (req,res) => {
 
         // object for filter options...
         const filterOptions = {}
-        
 
         // add createdAt date filter if date query is present
         if (req.body.date != "All" && req.body.date) {

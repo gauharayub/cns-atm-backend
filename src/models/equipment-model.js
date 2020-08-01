@@ -40,7 +40,7 @@ const equipmentSchema = new mongoose.Schema({
     maintenancePlanList:[{type:mongoose.Schema.Types.ObjectId, ref:'MaintenancePlan'}],
 
     //locations where the equipment is installed.....
-    locations:[{type:mongoose.Schema.Types.ObjectId, ref:'Location'}]
+    location: { type:mongoose.Schema.Types.ObjectId, ref:'Location'}
 })
 
 const Equipment = mongoose.model('Equipment',equipmentSchema)

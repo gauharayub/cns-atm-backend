@@ -6,21 +6,22 @@ const cron = require('node-cron')
 const timespan = require('timespan')
 
 //count of order number
-var num = 1111
+var num = 2231
 
 //function to generate orders every cycle of task.
 const orderGeneration = async()=>{
 
-    //runs every second
-    cron.schedule('*/1 * * * * *',async ()=>{
-        const locations = await Location.find()
-        const equipment = await Equipment.find()
-        for(let i=0;i<locations.length;i++){
-            await locations[i].populate('equipment').execPopulate()
-            await locations[i].populate('equipment.maintenancePlanList').execPopulate()
-            const maintenanceList = locations[i].equipment.maintenancePlanList
+    //runs every 10 second
+    cron.schedule('*/10 * * * * *', async ()=>{
+        // fetch list of all equipments...
+        const equipments = await Equipment.find()
+
+        for(let i=0; i<equipments.length; i++) {
+            await equipments[i].populate('maintenancePlanList').execPopulate()
+            await equipments[i].populate('location').execPopulate()
+            const maintenanceList = equipments[i].maintenancePlanList
         
-            for(let j=0;j<maintenanceList.length;j++){
+            for(let j=0; j<maintenanceList.length; j++) {
                 let current = Date.now()
                 let updated = Date.parse(maintenanceList[j].updatedAt)
 
@@ -49,22 +50,22 @@ const orderGeneration = async()=>{
                     //create new order if cycle has completed for task....  
                     const order = new Order({
                         number:num,
-                        assignmentCode:'T-400',
                         equipment:maintenanceList[j].equipment,
-                        work:'Cleaning of metal-part',
+                        equipmentCode:equipments[i].equipmentCode,
+                        work:maintenanceList[j].task,
                         task:maintenanceList[j].task,
-                        location:locations[i].description,
+                        location:equipments[i].location.description,
                         generationDate: Date.now(),
                         cycle:maintenanceList[j].cycle,
-                        equipmentCode:locations[i].equipment.equipmentCode
                     })
+
                     num++
-                        await order.save()
-                        maintenanceList[j].updatedAt = current
-                        await maintenanceList[j].save()
-                        console.log(order)
-                    }
+                    await order.save()
+                    maintenanceList[j].updatedAt = current
+                    await maintenanceList[j].save()
+                    console.log('order generated')
                 }
+            }
         }
     })
 }
