@@ -58,13 +58,23 @@ router.post('/login', async (req, res) => {
                 }
             }
             catch (e) {
-                res.status(400).send()
+                res.status(400).send({typeofUser: req.user })
             }
         }
     } 
     catch(e){
         res.status(401).send('Failed to login')
     }    
+})
+
+// get type of user...
+router.get('/typeofuser', auth, async (req,res) => {
+    try{
+        res.status(200).send({typeofUser: req.type})
+    }
+    catch(e){
+        res.status(404).send('Failed to get type of user')
+    }
 })
 
 
