@@ -39,8 +39,6 @@ router.get('/approval-form/:id',auth, async (req, res) => {
             location: order.location,
             equipmentCode: order.equipmentCode,
             cycle: order.cycle,
-            assignmentCode: order.assignmentCode,
-            assignmentNumber: order.assignmentNumber,
             engineer
         }
 
@@ -67,9 +65,8 @@ router.post('/submit-approval/:id', auth, async (req, res) => {
             //order details of newly generated order out of undone tasks..
             orderdetails = {
                 equipmentCode: order.equipmentCode,
-                assignmentCode: order.assignmentCode,
                 equipment: order.equipment,
-                number: order.number + 'B',
+                number: order.number + '-B',
                 work: order.work,
                 location: order.location,
                 cycle: order.cycle,
