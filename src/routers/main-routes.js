@@ -310,4 +310,42 @@ router.post('/sethealth', auth, async (req,res) => {
 })
 
 
+router.get('/gethealth',auth, async (req,res) => {
+    try {
+        const equipments = await Equipment.find()
+
+        const healthyEquipment = equipments.filter((equipment)=>{
+            return equipment.stateOfEquipment === "Healthy"
+        })
+
+        const fairEquipment = equipments.filter((equipment)=>{
+            return equipment.stateOfEquipment === "Fair"
+        })
+
+        const poorEquipment = equipments.filter((equipment)=>{
+            return equipment.stateOfEquipment === "Poor"
+        })
+
+        const scrapEquipment = equipments.filter((equipment)=>{
+            return equipment.stateOfEquipment === "Scrap"
+        })
+
+
+        const countOfHealth = {
+            Healthy:healthyEquipment.length,
+            Fair:fairEquipment.length,
+            Poor:poorEquipment.length,
+            Scrap:scrapEquipment.length
+        }
+
+        res.status(200).send(countOfHealth)
+
+    }
+    catch(e) {
+        res.status(400).send('server error')
+    }
+
+})
+
+
 module.exports = router
