@@ -226,9 +226,10 @@ router.post('/searchorders', auth , async (req,res) => {
         // object for filter options...
         const filterOptions = {}
 
-        // add createdAt date filter if date query is present
+        //add createdAt date filter if date query is present
         if (req.body.date != "All" && req.body.date) {
-            filterOptions.createdAt = req.body.date
+            const date = new Date(req.body.date)
+            filterOptions.createdAt = date
         }
 
         // add completed filter if completed query is present..
@@ -276,6 +277,20 @@ router.post('/searchorders', auth , async (req,res) => {
     catch (e) {
         res.status(404).send({error: "Could not query orders"})
     }
+})
+
+router.post('/sethealth', async (req,res) => {
+    try{
+        const equipment = await Equipment.findById(req.body.equipmentId)
+        const state = req.body.state
+        equipment.stateOfEquipment = state
+        equipment.save()
+        res.status(200)
+    }
+    catch(e){
+        res.status(401).send()
+    }
+    
 })
 
 

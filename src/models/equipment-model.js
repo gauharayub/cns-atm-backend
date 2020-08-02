@@ -32,8 +32,12 @@ const equipmentSchema = new mongoose.Schema({
     },
 
     name: {
-         type: String,
-         required:true
+        type: String,
+        required:true
+    },
+    stateOfEquipment: {
+        type:String,
+        required:true
     },
 
     //maintenance plan for equipment...

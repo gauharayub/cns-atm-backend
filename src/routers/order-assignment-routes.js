@@ -23,9 +23,7 @@ router.get('/order/:id', auth ,async (req, res) => {
             }
         }).execPopulate()
 	    console.log(order)
-
-        const date = new Date(order.deadlineDate)
-        order.deadlineDate = date.getDate()
+       
 
         const data = {
             tasklist: order.task.tasks,
@@ -68,8 +66,8 @@ router.post('/submit-form',auth, async (req, res) => {
 
         const emailID = engineer.emailID
         const phoneNumber = engineer.phoneNumber
-        sendMessage(emailID, 'Order Assignment', `An Order with orderID ${order._id} have been assigned to you`)
-        sendSMS(phoneNumber, 'text-here')
+        sendMessage('anasmd4u@gmail.com', 'Order Assignment', `An Order with orderID ${order._id} have been assigned to you`)
+        sendSMS('+919835555474', 'order assigned! you can start working')
         res.status(200).send()
     } 
     catch (e) {
