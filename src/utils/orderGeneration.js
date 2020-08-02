@@ -71,7 +71,7 @@ const orderGeneration = async()=>{
         }
     })
 
-
+    // cron scheduler for detecting deadline of equipments...
     cron.schedule('*/10 * * * * *', async () => {
         const orders = await Order.find()
 
@@ -80,9 +80,9 @@ const orderGeneration = async()=>{
             const deadline = Date.parse(orders[i].deadlineDate)
             let tspan = new timespan.TimeSpan(deadline - currentDate)
             if(tspan.totalDays() >= 0 && tspan.totalDays() <= 1 && orders[i].mailedAlert=="No" && orders[i].engineerStatus!="completed"){
-                // sendMessage('anasmd4u@gmail.com', 'One day left for order to be completed',
-                //             'Please get the order completed. Only one day to go before deadline')
-                // sendSMS('+919835555474', 'Please get the order completed. Only one day to go before deadline')
+                // sendMessage('gauharayub14@gmail.com', 'One day left for maintenance work to be completed',
+                //             'Please get the maintenance work completed. Only one day to go before deadline')
+                // sendSMS('+918949320519', 'Please get the maintenance work completed. Only one day to go before deadline')
                 // orders[i].mailedAlert = "Yes"
                 // await orders[i].save()
             }

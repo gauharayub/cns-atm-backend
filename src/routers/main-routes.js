@@ -279,18 +279,34 @@ router.post('/searchorders', auth , async (req,res) => {
     }
 })
 
-router.post('/sethealth', async (req,res) => {
+
+router.post('/sethealth', auth, async (req,res) => {
     try{
         const equipment = await Equipment.findById(req.body.equipmentId)
-        const state = req.body.state
-        equipment.stateOfEquipment = state
-        equipment.save()
-        res.status(200)
+        const voltage = req.body.voltage
+        const current = req.body.current
+        const temperature = req.body.temperature
+        if(voltage!=equipment.voltage && current!=equipment.current && temperature!=equipment.temperature) {
+            equipment.stateOfEquipment = "Scrap"
+        }
+        else if((voltage!=equipment.voltage && current!=equipment.current) || 
+                (voltage!=equipment.voltage && temperature!=equipment.temperature) || 
+                (current != equipment.current && temperature!=equipment.temperature)) {
+            equipment.stateOfEquipment = "Poor"     
+        }
+        else if(voltage!=equipment.voltage || current!=equipment.current || temperature!=equipment.temperature) {
+            equipment.stateOfEquipment = "Fair"
+        }
+        else{
+            equipment.stateOfEquipment = "Healthy"
+        }
+
+        await equipment.save()
+        res.status(200).send()
     }
     catch(e){
         res.status(401).send()
     }
-    
 })
 
 

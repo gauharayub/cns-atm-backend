@@ -16,16 +16,6 @@ const equipmentSchema = new mongoose.Schema({
          type:String,
          required:true
     },
-     
-    manufacturer:{
-         type: String,
-         required: true
-    },
-
-    procurement_data:{
-        type:Date,
-        required:true
-    },
     
     image: {
         type: Buffer
@@ -35,8 +25,23 @@ const equipmentSchema = new mongoose.Schema({
         type: String,
         required:true
     },
+
     stateOfEquipment: {
-        type:String,
+        type:String
+    },
+
+    voltage: {
+        type: Number,
+        required:true
+    },
+
+    current: {
+        type: Number,
+        required:true
+    },
+
+    temperature: {
+        type: Number,
         required:true
     },
 

@@ -27,6 +27,7 @@ router.get('/compliance/:id',auth, async (req, res) => {
             equipmentName: order.task.maintenancePlan.equipment.description,
             description: order.work,
             location: order.location,
+            number: order.number,
             _id: order._id,
             cycle: order.cycle,
             deadlineDate: order.deadlineDate,

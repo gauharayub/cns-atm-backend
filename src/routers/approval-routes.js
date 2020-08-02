@@ -39,6 +39,7 @@ router.get('/approval-form/:id',auth, async (req, res) => {
             location: order.location,
             equipmentCode: order.equipmentCode,
             cycle: order.cycle,
+            number: order.number,
             engineer,
             deadlineDate: order.deadlineDate,
             assignmentDate: order.assignmentDate,

@@ -28,7 +28,6 @@ const auth = async (req,res,next) => {
         if (!user) {
             throw new Error('User Not authenticated')
         }
-
         // add properties to request object....
         req.user = user
         req.token = token

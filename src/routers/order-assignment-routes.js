@@ -33,6 +33,7 @@ router.get('/order/:id', auth ,async (req, res) => {
             location: order.location,
             _id: order._id,
             cycle: order.cycle,
+            number:order.number,
             deadlineDate: order.deadlineDate
         }
         res.status(200).send(data)
