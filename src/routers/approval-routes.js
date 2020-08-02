@@ -31,15 +31,6 @@ router.get('/approval-form/:id',auth, async (req, res) => {
         // actual code to be replaced with test code...
         // const engineer = order.engineer.name
 
-        let date = new Date(order.deadlineDate)
-        order.deadlineDate = date.getDate()
-
-        date = new Date(order.assignmentDate)
-        order.assignmentDate = date.getDate()
-
-        date = new Date(order.generationDate)
-        order.generationDate = date.getDate()
-
         const data = {
             tasklist,
             remarks: order.remarks,

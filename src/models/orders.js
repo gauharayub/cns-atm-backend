@@ -53,8 +53,7 @@ const orderSchema = new mongoose.Schema({
         required:true,
     },
     assignmentDate:{
-        type:Date,
-        required:true
+        type:Date
     },
     engineerStatus:{
         type:String,

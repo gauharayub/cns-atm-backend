@@ -21,15 +21,6 @@ router.get('/compliance/:id',auth, async (req, res) => {
         }).execPopulate()
         console.log(order)
 
-        let date = new Date(order.deadlineDate)
-        order.deadlineDate = date.getDate()
-
-        date = new Date(order.assignmentDate)
-        order.assignmentDate = date.getDate()
-
-        date = new Date(order.generationDate)
-        order.generationDate = date.getDate()
-
         const data = {
             tasklist: order.task.tasks,
             equipmentCode: order.task.maintenancePlan.equipment.equipmentCode,

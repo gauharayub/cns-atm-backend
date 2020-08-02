@@ -108,9 +108,7 @@ router.get('/engineerOrders', auth, async(req, res) => {
         const ordersAssignedToEngineer = engineer.orders
 
         for( let i=0; i<ordersAssignedToEngineer.length; i++ ) {
-            delete ordersAssignedToEngineer[i].workImage
-            const date = new Date(ordersAssignedToEngineer[i].deadlineDate)
-            ordersAssignedToEngineer[i].deadlineDate = date.getDate()
+            ordersAssignedToEngineer[i].workImage = []
         }
 
         const assignedOrders = {
@@ -159,19 +157,12 @@ router.get('/employeeOrders', auth, async (req, res) => {
         const unassignedOrders = await Order.find({employeeStatus: 'unassigned', engineerStatus: 'unassigned'})
 
         for( let i=0; i<ordersAssignedByEmployee.length; i++ ) {
-            delete ordersAssignedByEmployee[i].workImage
-            const date = new Date(ordersAssignedByEmployee[i].deadlineDate)
-            ordersAssignedByEmployee[i].deadlineDate = date.getDate()
-        }
-
-        for( let i=0; i<unassignedOrders.length; i++ ) {
-            const date = new Date(unassignedOrders[i].deadlineDate)
-            unassignedOrders[i].deadlineDate = date.getDate()
+            ordersAssignedByEmployee[i].workImage = []
         }
 
         const todoOrders = {
             heading: 'Todo',
-            orders: await Order.find({employeeStatus: 'unassigned', engineerStatus: 'unassigned'})
+            orders: unassignedOrders
         }
 
         const progressOrders = {
@@ -277,9 +268,7 @@ router.post('/searchorders', auth , async (req,res) => {
         const orders = await Order.find(filterOptions)
 
         for( let i=0; i<orders.length; i++ ) {
-            delete orders[i].workImage
-            const date = new Date(orders[i].deadlineDate)
-            orders[i].deadlineDate = date.getDate()
+            orders[i].workImage = []
         }
 
         res.status(200).send(orders)
