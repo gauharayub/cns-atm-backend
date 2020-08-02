@@ -23,7 +23,7 @@ const auth = async (req,res,next) => {
             user = employee
             req.type = "employee"
         }
-        console.log("user",user)
+        
         // if user is not found then user is not authenticated , throw error 
         if (!user) {
             throw new Error('User Not authenticated')

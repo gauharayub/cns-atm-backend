@@ -119,6 +119,12 @@ router.get('/orders/:cycle',auth, async (req,res)=>{
             return false;
         })
 
+        for( let i=0; i<upcomingOrders.length; i++ ) {
+            delete upcomingOrders[i].workImage
+            const date = new Date(upcomingOrders[i].deadlineDate)
+            upcomingOrders[i].deadlineDate = date.getDate()
+        }
+
         res.status(200).send(upcomingOrders)
     }
     catch(e) {

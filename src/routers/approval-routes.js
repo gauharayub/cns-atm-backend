@@ -31,6 +31,15 @@ router.get('/approval-form/:id',auth, async (req, res) => {
         // actual code to be replaced with test code...
         // const engineer = order.engineer.name
 
+        let date = new Date(order.deadlineDate)
+        order.deadlineDate = date.getDate()
+
+        date = new Date(order.assignmentDate)
+        order.assignmentDate = date.getDate()
+
+        date = new Date(order.generationDate)
+        order.generationDate = date.getDate()
+
         const data = {
             tasklist,
             remarks: order.remarks,
@@ -39,12 +48,16 @@ router.get('/approval-form/:id',auth, async (req, res) => {
             location: order.location,
             equipmentCode: order.equipmentCode,
             cycle: order.cycle,
-            engineer
+            engineer,
+            deadlineDate: order.deadlineDate,
+            assignmentDate: order.assignmentDate,
+            generationDate: order.generationDate
         }
 
         res.status(200).send(data)
 
-    } catch (e) {
+    } 
+    catch (e) {
 
         res.status(404).send({
             error: "Could not find the requested resource!"
@@ -60,8 +73,14 @@ router.post('/submit-approval/:id', auth, async (req, res) => {
         const orderId = req.params.id
         const order = await Order.findById(orderId)
 
-        if (req.body.undoneTasks.length) {
+        let date = new Date(order.generationDate)
+        order.generationDate = date.getDate()
 
+        date = new Date(order.deadlineDate)
+        order.deadlineDate = date.getDate()
+
+
+        if (req.body.undoneTasks && req.body.undoneTasks.length) {
             //order details of newly generated order out of undone tasks..
             orderdetails = {
                 equipmentCode: order.equipmentCode,
@@ -71,13 +90,14 @@ router.post('/submit-approval/:id', auth, async (req, res) => {
                 location: order.location,
                 cycle: order.cycle,
                 tasklist: req.body.undoneTasks,
-                task:order.task
+                task:order.task,
+                generationDate: Date.now(),
+                deadlineDate:Date.now()
             }
 
             // generate new order for remaining tasks
             const newOrder = new Order(orderdetails)
             await newOrder.save()
-            
         }
 
         // change status of this order for employee as well as engineer..

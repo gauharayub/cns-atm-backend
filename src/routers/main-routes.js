@@ -102,11 +102,16 @@ router.get('/engineerOrders', auth, async(req, res) => {
     
     try {
         const engineer = req.user
-       
         await engineer.populate('orders').execPopulate()
         
          // array of orders assigned to engineer..
         const ordersAssignedToEngineer = engineer.orders
+
+        for( let i=0; i<ordersAssignedToEngineer.length; i++ ) {
+            delete ordersAssignedToEngineer[i].workImage
+            const date = new Date(ordersAssignedToEngineer[i].deadlineDate)
+            ordersAssignedToEngineer[i].deadlineDate = date.getDate()
+        }
 
         const assignedOrders = {
             heading: 'Assigned',
@@ -151,6 +156,18 @@ router.get('/employeeOrders', auth, async (req, res) => {
 
         // orders assigned by employee..
         const ordersAssignedByEmployee = employee.orders
+        const unassignedOrders = await Order.find({employeeStatus: 'unassigned', engineerStatus: 'unassigned'})
+
+        for( let i=0; i<ordersAssignedByEmployee.length; i++ ) {
+            delete ordersAssignedByEmployee[i].workImage
+            const date = new Date(ordersAssignedByEmployee[i].deadlineDate)
+            ordersAssignedByEmployee[i].deadlineDate = date.getDate()
+        }
+
+        for( let i=0; i<unassignedOrders.length; i++ ) {
+            const date = new Date(unassignedOrders[i].deadlineDate)
+            unassignedOrders[i].deadlineDate = date.getDate()
+        }
 
         const todoOrders = {
             heading: 'Todo',
@@ -258,6 +275,12 @@ router.post('/searchorders', auth , async (req,res) => {
         
         // find all orders after applying filter options..
         const orders = await Order.find(filterOptions)
+
+        for( let i=0; i<orders.length; i++ ) {
+            delete orders[i].workImage
+            const date = new Date(orders[i].deadlineDate)
+            orders[i].deadlineDate = date.getDate()
+        }
 
         res.status(200).send(orders)
     }   

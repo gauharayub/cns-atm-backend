@@ -5,7 +5,7 @@ const sendMessage = (recipient,subject,message)=>{
   try{
       sgMail.send({
         to:recipient,
-        from: 'gauharayub14@gmail.com',
+        from: 'technovikings.aai@gmail.com',
         subject,
         text: message
       })

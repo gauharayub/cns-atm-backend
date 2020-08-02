@@ -23,6 +23,10 @@ router.get('/order/:id', auth ,async (req, res) => {
             }
         }).execPopulate()
 	    console.log(order)
+
+        const date = new Date(order.deadlineDate)
+        order.deadlineDate = date.getDate()
+
         const data = {
             tasklist: order.task.tasks,
             equipmentCode: order.equipmentCode,
@@ -30,7 +34,8 @@ router.get('/order/:id', auth ,async (req, res) => {
             description: order.work,
             location: order.location,
             _id: order._id,
-            cycle: order.cycle
+            cycle: order.cycle,
+            deadlineDate: order.deadlineDate
         }
         res.status(200).send(data)
     } 
@@ -54,6 +59,7 @@ router.post('/submit-form',auth, async (req, res) => {
         order.engineer = engineer._id
         order.engineerStatus = "assigned"
         order.employeeStatus = "assigned"
+        order.assignmentDate = Date.now()
 
         await order.save()
         

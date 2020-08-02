@@ -35,6 +35,10 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee'
     },
+    mailedAlert: {
+        type:String,
+        default:"No"
+    },
     location:{
         type:String,
         required:true
@@ -48,6 +52,10 @@ const orderSchema = new mongoose.Schema({
         type:Date,
         required:true,
     },
+    assignmentDate:{
+        type:Date,
+        required:true
+    },
     engineerStatus:{
         type:String,
         required:true,
@@ -58,8 +66,9 @@ const orderSchema = new mongoose.Schema({
         required: true,
         default:"unassigned"
     },
-    dateOfCompletion:{
-        type:Date
+    deadlineDate: {
+        type:Date,
+        required:true
     },
     cycle:{
         type:String,
