@@ -21,7 +21,12 @@ const auth = async (req,res,next) => {
         //check if user is employee
         if(employee){
             user = employee
-            req.type = "employee"
+            if(employee.department === "Admin"){
+                req.type = "admin"
+            }
+            else{
+                req.type = "employee"
+            }
         }
         
         // if user is not found then user is not authenticated , throw error 
