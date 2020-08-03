@@ -362,12 +362,13 @@ router.post('/addequipment', auth, async (req,res) => {
             temperature: req.body.temperature,
         }
         const equipment = new Equipment(equipmentDetails)
+        
         await equipment.save()
-       
         res.status(200).send()
     }
     catch(e) {
-        res.status(400).send('Please add correct details about equipment')
+        console.log(e)
+        res.status(400).send(e, 'Please add correct details about equipment')
     }
 
 })
