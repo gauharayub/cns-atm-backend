@@ -69,8 +69,8 @@ router.post('/submit-form',auth, async (req, res) => {
         const emailID = engineer.emailID
         const phoneNumber = engineer.phoneNumber
         sendMessage('anasbeg50@gmail.com', 'Order Assignment', `An Order with orderID ${order._id} have been assigned to you`)
-        sendSMS('+916265692813', 'Maintenance work assigned! you can start working')
-        sendWhatsappMessage('+916265692813', 'Maintenance work assigned! you can start working')
+        sendSMS('+919835555474', 'Maintenance work assigned! you can start working')
+        sendWhatsappMessage('+919835555474', 'Maintenance work assigned! you can start working')
         res.status(200).send()
     } 
     catch(e) {

@@ -286,6 +286,7 @@ router.post('/sethealth', auth, async (req,res) => {
         const voltage = req.body.voltage
         const current = req.body.current
         const temperature = req.body.temperature
+
         if(voltage!=equipment.voltage && current!=equipment.current && temperature!=equipment.temperature) {
             equipment.stateOfEquipment = "Scrap"
         }
@@ -343,6 +344,30 @@ router.get('/gethealth',auth, async (req,res) => {
     }
     catch(e) {
         res.status(400).send('server error')
+    }
+
+})
+
+
+router.post('/addequipment', auth, async (req,res) => {
+    try {
+        const equipmentDetails = {
+            equipmentNumber: req.body.equipmentNumber,
+            equipmentCode: req.body.equipmentCode,
+            description: req.body.description,
+            stateOfEquipment: "Healthy",
+            name: req.body.name,
+            voltage: req.body.voltage,
+            current: req.body.current,
+            temperature: req.body.temperature,
+        }
+        const equipment = new Equipment(equipmentDetails)
+        await equipment.save()
+       
+        res.status(200).send()
+    }
+    catch(e) {
+        res.status(400).send('Please add correct details about equipment')
     }
 
 })
