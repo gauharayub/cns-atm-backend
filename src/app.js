@@ -8,7 +8,6 @@ const orderAssignmentRoutes = require('./routers/order-assignment-routes')
 const orderGeneration = require('./utils/orderGeneration')
 const path = require('path')
 const cors = require('cors')
-// require('./messaging/whatappClient')
 
 //creates an express web-server
 const app=express()
@@ -33,7 +32,7 @@ app.use(approvalRoutes)
 app.use(orderAssignmentRoutes)
 
 //function to start cycle-based order generation...
-// orderGeneration()
+orderGeneration()
 
 
 //listen on specified port.....

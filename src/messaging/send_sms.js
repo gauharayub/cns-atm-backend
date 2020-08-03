@@ -12,7 +12,7 @@ const sendSMS = async (phoneNumber,message)=>{
         console.log(res.sid)
     }
     catch(e){
-        console.log('error sending the message')
+        console.log(e, 'error sending the message')
     }
     
 }

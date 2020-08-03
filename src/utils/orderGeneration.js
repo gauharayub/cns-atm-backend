@@ -6,6 +6,7 @@ const cron = require('node-cron')
 const timespan = require('timespan')
 const sendMessage = require('../messaging/send_email')
 const sendSMS = require('../messaging/send_sms')
+const sendWhatsappMessage = require('../messaging/whatappClient')
 
 //count of order number
 var num = 2231
@@ -79,12 +80,14 @@ const orderGeneration = async()=>{
             const currentDate = Date.now()
             const deadline = Date.parse(orders[i].deadlineDate)
             let tspan = new timespan.TimeSpan(deadline - currentDate)
-            if(tspan.totalDays() >= 0 && tspan.totalDays() <= 1 && orders[i].mailedAlert=="No" && orders[i].engineerStatus!="completed"){
-                // sendMessage('gauharayub14@gmail.com', 'One day left for maintenance work to be completed',
-                //             'Please get the maintenance work completed. Only one day to go before deadline')
-                // sendSMS('+918949320519', 'Please get the maintenance work completed. Only one day to go before deadline')
+            console.log(tspan.totalDays())
+            if(tspan.totalDays() < 0 && orders[i].mailedAlert=="No" && orders[i].engineerStatus!="completed"){
+                sendMessage('anasbeg50@gmail.com', 'One day left for maintenance work to be completed',
+                            'Please get the maintenance work completed. Only one day to go before deadline')
+                sendSMS('+916265692813', 'Please get the maintenance work completed. Only one day to go before deadline')
+                sendWhatsappMessage('+916265692813', 'Please get the maintenance work completed. Only one day to go before deadline')
                 // orders[i].mailedAlert = "Yes"
-                // await orders[i].save()
+                await orders[i].save()
             }
         }
     })

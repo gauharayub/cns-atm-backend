@@ -6,6 +6,7 @@ const TaskList = require('../models/tasklist')
 const Equipment = require('../models/equipment-model')
 const MaintenancePlan = require('../models/maintenance-plan')
 const sendMessage = require('../messaging/send_email')
+const sendWhatsappMessage = require('../messaging/whatappClient')
 const sendSMS = require('../messaging/send_sms')
 const auth = require('../auth/auth')
 
@@ -67,11 +68,12 @@ router.post('/submit-form',auth, async (req, res) => {
 
         const emailID = engineer.emailID
         const phoneNumber = engineer.phoneNumber
-        sendMessage('anasmd4u@gmail.com', 'Order Assignment', `An Order with orderID ${order._id} have been assigned to you`)
-        sendSMS('+919835555474', 'order assigned! you can start working')
+        sendMessage('anasbeg50@gmail.com', 'Order Assignment', `An Order with orderID ${order._id} have been assigned to you`)
+        sendSMS('+916265692813', 'Maintenance work assigned! you can start working')
+        sendWhatsappMessage('+916265692813', 'Maintenance work assigned! you can start working')
         res.status(200).send()
     } 
-    catch (e) {
+    catch(e) {
         res.status(400).send({
             error: "Error parsing the body-data"
         })
