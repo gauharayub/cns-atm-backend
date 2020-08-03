@@ -15,7 +15,7 @@ var num = 2231
 const orderGeneration = async()=>{
 
     //runs every 10 second
-    cron.schedule('*/10 * * * * *', async ()=>{
+    cron.schedule('*/50 * * * * *', async ()=>{
         // fetch list of all equipments...
         const equipments = await Equipment.find()
 
@@ -73,7 +73,7 @@ const orderGeneration = async()=>{
     })
 
     // cron scheduler for detecting deadline of equipments...
-    cron.schedule('*/10 * * * * *', async () => {
+    cron.schedule('* */50 * * * *', async () => {
         const orders = await Order.find()
 
         for(let i=0; i<orders.length; i++) {
@@ -86,7 +86,7 @@ const orderGeneration = async()=>{
                             'Please get the maintenance work completed. Only one day to go before deadline')
                 sendSMS('+916265692813', 'Please get the maintenance work completed. Only one day to go before deadline')
                 sendWhatsappMessage('+916265692813', 'Please get the maintenance work completed. Only one day to go before deadline')
-                // orders[i].mailedAlert = "Yes"
+                orders[i].mailedAlert = "Yes"
                 await orders[i].save()
             }
         }
