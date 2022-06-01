@@ -27,7 +27,7 @@
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
-    "sharp": "^0.25.1",
+    "sharp": "^0.30.5",
     "timespan": "^2.3.0",
     "twilio": "^3.39.5"
   },
