@@ -19,7 +19,7 @@
     "datejs": "^1.0.0-rc3",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^3.5.2",
     "mongoose": "^5.8.9",
     "multer": "^1.4.2",
